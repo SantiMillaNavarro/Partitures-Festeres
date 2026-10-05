@@ -2,58 +2,86 @@
 
 [Valencià](README.md) · [Español](README_es.md) · **English**
 
-Android application designed to make it easier to organise, access and consult festive music scores from tablets and Android devices.
+Android application for organising, consulting and using festive-band sheet music on tablets and Android devices, designed especially for rehearsals, street performances, concerts and other situations where musicians need convenient access to a large repertoire.
 
 ## Project status
 
-The project is currently under development.
+**Partitures Festeres is under active development and already has stable, usable releases.**
 
-This repository will contain the application's source code, project documentation and, when stable versions are available, links to versions published through GitHub Releases.
+Current stable version: **v1.6.5** (versionCode 27).
+
+The latest version can be downloaded from [GitHub Releases](https://github.com/SantiMillaNavarro/Partitures-Festeres/releases/latest).
 
 ## Purpose
 
-Partitures Festeres was created to make it easier to organise, access and consult festive music scores, especially in situations where musicians perform away from their rehearsal venue or need to carry a large repertoire in a convenient and orderly way.
+The project aims to reduce reliance on physical folders, paper scores and scattered files by providing an organised score library that can be accessed directly from an Android tablet.
 
-The application aims to provide a simple alternative to manually carrying and managing folders, paper scores or scattered files, allowing scores to remain organised in folders and to be accessed quickly from a tablet or Android device.
+The application respects the device's real folder structure and is designed to help musicians reach the score they need quickly.
 
-## Planned features
+## Current features
 
-The project's main planned features include:
+Available features include:
 
-- Library based on the device's real folder structure.
-- Dynamic detection of subfolders and repertoire.
-- Score viewing.
-- Viewer adaptation to portrait and landscape orientation.
-- Valencian user interface.
-- Compatibility with a broad range of Android versions.
-- Progressive development based on testing, suggestions and contributions.
+- **Library based on real device folders**, with dynamic subfolder detection.
+- **Repertoires** for grouping and preparing sets of scores.
+- Quick access to **Recent** and **Favourite** scores.
+- Score **search**.
+- Document **import and scanning**.
+- **PDF viewer** adapted to portrait and landscape orientation.
+- Viewing adjustments and **annotations** on scores.
+- Preservation of reading state and preferences.
+- **Backups** of settings and application-managed data.
+- Integrated musical tools: **tuner**, **metronome** and **reference tone**.
+- **Widget** for quick access.
+- User interface available in **Valencian and Spanish**.
+
+## Compatibility
+
+- Android **8.0 (API 26)** or later.
+- targetSdk: 36
+- compileSdk: 36
+
+The application is primarily designed for tablets, although it can also run on other compatible Android devices.
 
 ## User guide
 
-See the [user guide](docs/USER_GUIDE_en.md) for the application's main features and visual examples.
+See the [English user guide](docs/USER_GUIDE_en.md) for the application's main features and visual examples.
 
-## Downloads
+Also available:
 
-When stable versions are available, they will be published in the repository's **Releases** section.
+- [Guia d'ús en valencià](docs/GUIA_US_va.md)
+- [Guía de uso en español](docs/GUIA_US_es.md)
 
-Users who only want to use the application will be able to download the corresponding APK file there without needing to compile the project.
+## Download and installation
 
-## Contributing
+The latest stable version is available from [**Releases**](https://github.com/SantiMillaNavarro/Partitures-Festeres/releases/latest).
 
-Suggestions, bug reports and code contributions are welcome.
+To install the application:
 
-You can use:
+1. download the APK attached to the latest Release;
+2. open it on the Android device;
+3. if requested by Android, temporarily allow installation of applications from that source.
 
-- **Issues** to report bugs, suggestions or ideas.
-- **Pull Requests** to propose code changes.
+You do not need to compile the project to use the application.
 
-Contributions may be reviewed before being incorporated into the project's main branch.
+## Development and contributing
+
+The source code and project documentation are maintained in this repository.
+
+Bug reports, suggestions and code contributions are welcome:
+
+- use **Issues** to report bugs, suggestions or ideas;
+- use **Pull Requests** to propose code changes.
+
+Contributions may be reviewed before they are incorporated into the main branch.
 
 ## License
 
-The source code in this project is published under a custom **non-commercial source-available license**.
+This project is distributed under the **Partitures Festeres — Non-Commercial Source-Available License**.
 
-You may view, study and modify the code for personal, educational or project collaboration purposes, but commercial exploitation is not permitted without the express permission of the rights holder.
+The license allows users to view, study, run, modify and fork the project for personal, educational, non-commercial or collaborative purposes, but **commercial exploitation is not permitted without the express permission** of the rights holder.
+
+This is a custom *source-available* license and **is not an OSI-approved Open Source license**.
 
 See the [LICENSE](LICENSE) file for the full terms.
 
@@ -61,4 +89,4 @@ See the [LICENSE](LICENSE) file for the full terms.
 
 © 2026 Santi Milla Navarro
 
-Partitures Festeres is a project directed and developed by Santi Milla Navarro with assistance from artificial intelligence tools during the development process.
+Partitures Festeres is a project directed and developed by **Santi Milla Navarro**, with assistance from artificial intelligence tools during the development process.
