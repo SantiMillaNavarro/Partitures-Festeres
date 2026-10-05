@@ -10,7 +10,7 @@ Aquest repositori contindrà el codi font de l'aplicació, la documentació del 
 
 ## Objectiu
 
-Partitures Festeres naix amb l'objectiu d'oferir una eina senzilla i pràctica per consultar repertori musical fester des d'un dispositiu Android, amb especial atenció a l'ús en tauletes.
+Partitures Festeres naix amb l'objectiu d'oferir una eina senzilla i pràctica per consultar i gestionar partitures digitals des d'un dispositiu Android.
 
 ## Funcions previstes
 
