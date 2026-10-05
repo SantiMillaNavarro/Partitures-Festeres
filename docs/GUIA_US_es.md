@@ -19,7 +19,7 @@ La carpeta raíz puede cambiarse posteriormente desde **Ajustes**.
 
 La sección **Biblioteca** es el punto principal de acceso a las partituras.
 
-![Biblioteca](images/biblioteca.jpg)
+![Biblioteca](images/biblioteca.png)
 
 Desde aquí puedes:
 
@@ -34,7 +34,7 @@ La aplicación lee dinámicamente las carpetas existentes, por lo que no es nece
 
 Los **Repertorios** permiten crear listas propias de partituras para una actuación concreta, concierto, entrada, procesión o cualquier otra situación.
 
-![Repertorios](images/repertoris.jpg)
+![Repertorios](images/repertoris.png)
 
 Puedes:
 
@@ -50,7 +50,7 @@ Esto permite preparar antes de salir a tocar exactamente las obras que vas a nec
 
 La sección **Recientes** muestra las últimas partituras consultadas.
 
-![Recientes](images/recents.jpg)
+![Recientes](images/recents.png)
 
 Es útil para volver rápidamente a una obra sin tener que buscarla de nuevo en la biblioteca.
 
@@ -58,7 +58,7 @@ Es útil para volver rápidamente a una obra sin tener que buscarla de nuevo en 
 
 Puedes marcar las partituras que utilizas con más frecuencia como **Favoritos**.
 
-![Favoritos](images/favorits.jpg)
+![Favoritos](images/favorits.png)
 
 Esta sección ofrece acceso directo a las obras que quieres tener siempre localizadas.
 
@@ -66,7 +66,7 @@ Esta sección ofrece acceso directo a las obras que quieres tener siempre locali
 
 El botón **+** abre las opciones para incorporar nuevas partituras.
 
-![Escanear e importar partituras](images/escanejar_importar.jpg)
+![Escanear e importar partituras](images/escanejar_importar.png)
 
 Puedes:
 
@@ -95,7 +95,7 @@ La sección **Herramientas** incorpora utilidades pensadas para el ensayo y la a
 
 ### Afinador
 
-![Afinador](images/afinador.jpg)
+![Afinador](images/afinador.png)
 
 Utiliza el micrófono del dispositivo para mostrar la desviación de la nota respecto a la afinación correcta.
 
@@ -109,7 +109,7 @@ Permite seleccionar el tempo y el compás e iniciar un pulso regular para el est
 
 ### Nota de referencia
 
-![Nota de referencia](images/nota_referencia.jpg)
+![Nota de referencia](images/nota_referencia.png)
 
 Genera una nota continua desde el dispositivo.
 
@@ -117,7 +117,7 @@ Puedes seleccionar la nota, la octava y ajustar la frecuencia de referencia. Tam
 
 ## 9. Ajustes, copia de seguridad e idioma
 
-![Ajustes](images/ajustos.jpg)
+![Ajustes](images/ajustos.png)
 
 Desde **Ajustes** puedes:
 
