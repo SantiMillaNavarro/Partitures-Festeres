@@ -103,7 +103,7 @@ La referència d'afinació es pot ajustar segons les necessitats del grup.
 
 ### Metrònom
 
-![Metrònom](images/metronom.jpg)
+![Metrònom](images/metronom.png)
 
 Permet seleccionar el tempo i el compàs i iniciar un pols regular per a l'estudi o assaig.
 
