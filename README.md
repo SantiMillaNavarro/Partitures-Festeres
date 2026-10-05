@@ -29,6 +29,10 @@ Entre les funcions principals del projecte es troben:
 - Compatibilitat amb un ampli ventall de versions d'Android.
 - Evolució progressiva del projecte a partir de proves, suggeriments i contribucions.
 
+## Guia d'ús
+
+Consulta la [guia d'ús](docs/GUIA_US_va.md) per conéixer les funcions principals de l'aplicació amb exemples visuals.
+
 ## Descàrregues
 
 Quan hi haja versions estables disponibles, es publicaran en l'apartat **Releases** del repositori.
