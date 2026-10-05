@@ -95,7 +95,7 @@ Uses the device microphone to show pitch deviation from the nearest note. The tu
 
 ### Metronome
 
-![Metronome](images/metronom.jpg)
+![Metronome](images/metronom.png)
 
 Lets you choose tempo and time signature and start a regular pulse.
 
