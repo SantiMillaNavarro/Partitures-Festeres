@@ -85,8 +85,18 @@ This is a custom *source-available* license and **is not an OSI-approved Open So
 
 See the [LICENSE](LICENSE) file for the full terms.
 
+## Use of artificial intelligence
+
+This project has been developed with significant assistance from artificial intelligence tools.
+
+The **application code has been generated iteratively with ChatGPT, by OpenAI, based on the specifications, requirements, design decisions, testing feedback and instructions provided by Santi Milla Navarro**.
+
+Santi Milla Navarro has directed the functional development of the project: defining the application's goals and behaviour, making design decisions, testing successive versions on real devices, identifying issues, and specifying the required fixes and improvements. ChatGPT has acted as a development tool, generating and modifying code according to those instructions and also assisting with documentation, review and project organisation.
+
+This information is stated explicitly to provide maximum transparency about the development process.
+
 ## Author
 
 © 2026 Santi Milla Navarro
 
-Partitures Festeres is a project directed and developed by **Santi Milla Navarro**, with assistance from artificial intelligence tools during the development process.
+Partitures Festeres is a project directed by **Santi Milla Navarro**.
