@@ -50,7 +50,7 @@ Esto permite preparar antes de salir a tocar exactamente las obras que vas a nec
 
 La sección **Recientes** muestra las últimas partituras consultadas.
 
-![Recientes](images/recents.svg)
+![Recientes](images/recents.jpg)
 
 Es útil para volver rápidamente a una obra sin tener que buscarla de nuevo en la biblioteca.
 
@@ -58,7 +58,7 @@ Es útil para volver rápidamente a una obra sin tener que buscarla de nuevo en 
 
 Puedes marcar las partituras que utilizas con más frecuencia como **Favoritos**.
 
-![Favoritos](images/favorits.svg)
+![Favoritos](images/favorits.jpg)
 
 Esta sección ofrece acceso directo a las obras que quieres tener siempre localizadas.
 
@@ -66,7 +66,7 @@ Esta sección ofrece acceso directo a las obras que quieres tener siempre locali
 
 El botón **+** abre las opciones para incorporar nuevas partituras.
 
-![Escanear e importar partituras](images/escanejar_importar.svg)
+![Escanear e importar partituras](images/escanejar_importar.jpg)
 
 Puedes:
 
@@ -95,7 +95,7 @@ La sección **Herramientas** incorpora utilidades pensadas para el ensayo y la a
 
 ### Afinador
 
-![Afinador](images/afinador.svg)
+![Afinador](images/afinador.jpg)
 
 Utiliza el micrófono del dispositivo para mostrar la desviación de la nota respecto a la afinación correcta.
 
@@ -103,13 +103,13 @@ La referencia de afinación puede ajustarse según las necesidades del grupo.
 
 ### Metrónomo
 
-![Metrónomo](images/metronom.svg)
+![Metrónomo](images/metronom.jpg)
 
 Permite seleccionar el tempo y el compás e iniciar un pulso regular para el estudio o ensayo.
 
 ### Nota de referencia
 
-![Nota de referencia](images/nota_referencia.svg)
+![Nota de referencia](images/nota_referencia.jpg)
 
 Genera una nota continua desde el dispositivo.
 
@@ -117,7 +117,7 @@ Puedes seleccionar la nota, la octava y ajustar la frecuencia de referencia. Tam
 
 ## 9. Ajustes, copia de seguridad e idioma
 
-![Ajustes](images/ajustos.svg)
+![Ajustes](images/ajustos.jpg)
 
 Desde **Ajustes** puedes:
 
