@@ -28,6 +28,10 @@ The project's main planned features include:
 - Compatibility with a broad range of Android versions.
 - Progressive development based on testing, suggestions and contributions.
 
+## User guide
+
+See the [user guide](docs/USER_GUIDE_en.md) for the application's main features and visual examples.
+
 ## Downloads
 
 When stable versions are available, they will be published in the repository's **Releases** section.
