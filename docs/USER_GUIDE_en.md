@@ -48,19 +48,19 @@ You can:
 
 The **Recent** section shows the scores you opened most recently, providing quick access without searching the library again.
 
-![Recent](images/recents.svg)
+![Recent](images/recents.jpg)
 
 ## 5. Favourites
 
 Frequently used scores can be marked as **Favourites** for quick access.
 
-![Favourites](images/favorits.svg)
+![Favourites](images/favorits.jpg)
 
 ## 6. Scan and import
 
 Use the **+** button to add new scores.
 
-![Scan and import](images/escanejar_importar.svg)
+![Scan and import](images/escanejar_importar.jpg)
 
 You can:
 
@@ -89,25 +89,25 @@ The **Tools** section includes utilities for rehearsals and performances.
 
 ### Tuner
 
-![Tuner](images/afinador.svg)
+![Tuner](images/afinador.jpg)
 
 Uses the device microphone to show pitch deviation from the nearest note. The tuning reference can be adjusted.
 
 ### Metronome
 
-![Metronome](images/metronom.svg)
+![Metronome](images/metronom.jpg)
 
 Lets you choose tempo and time signature and start a regular pulse.
 
 ### Reference note
 
-![Reference note](images/nota_referencia.svg)
+![Reference note](images/nota_referencia.jpg)
 
 Generates a continuous reference note from the device. You can select note, octave and reference frequency, with shortcuts for common notes.
 
 ## 9. Settings, backup and language
 
-![Settings](images/ajustos.svg)
+![Settings](images/ajustos.jpg)
 
 From **Settings** you can:
 
