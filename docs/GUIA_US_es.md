@@ -6,7 +6,6 @@ Esta guía explica las funciones principales de **Partitures Festeres** y cómo 
 
 > Las capturas corresponden a una versión reciente de la aplicación. Algunos textos o detalles visuales pueden variar ligeramente entre versiones.
 
-![Vista general de la aplicación](images/manual_overview.jpg)
 
 ## 1. Primera configuración
 
@@ -20,6 +19,8 @@ La carpeta raíz puede cambiarse posteriormente desde **Ajustes**.
 
 La sección **Biblioteca** es el punto principal de acceso a las partituras.
 
+![Biblioteca](images/biblioteca.jpg)
+
 Desde aquí puedes:
 
 - navegar por las carpetas de partituras;
@@ -32,6 +33,8 @@ La aplicación lee dinámicamente las carpetas existentes, por lo que no es nece
 ## 3. Repertorios
 
 Los **Repertorios** permiten crear listas propias de partituras para una actuación concreta, concierto, entrada, procesión o cualquier otra situación.
+
+![Repertorios](images/repertoris.jpg)
 
 Puedes:
 
@@ -47,17 +50,23 @@ Esto permite preparar antes de salir a tocar exactamente las obras que vas a nec
 
 La sección **Recientes** muestra las últimas partituras consultadas.
 
+![Recientes](images/recents.svg)
+
 Es útil para volver rápidamente a una obra sin tener que buscarla de nuevo en la biblioteca.
 
 ## 5. Favoritos
 
 Puedes marcar las partituras que utilizas con más frecuencia como **Favoritos**.
 
+![Favoritos](images/favorits.svg)
+
 Esta sección ofrece acceso directo a las obras que quieres tener siempre localizadas.
 
 ## 6. Escanear e importar partituras
 
 El botón **+** abre las opciones para incorporar nuevas partituras.
+
+![Escanear e importar partituras](images/escanejar_importar.svg)
 
 Puedes:
 
@@ -86,21 +95,29 @@ La sección **Herramientas** incorpora utilidades pensadas para el ensayo y la a
 
 ### Afinador
 
+![Afinador](images/afinador.svg)
+
 Utiliza el micrófono del dispositivo para mostrar la desviación de la nota respecto a la afinación correcta.
 
 La referencia de afinación puede ajustarse según las necesidades del grupo.
 
 ### Metrónomo
 
+![Metrónomo](images/metronom.svg)
+
 Permite seleccionar el tempo y el compás e iniciar un pulso regular para el estudio o ensayo.
 
 ### Nota de referencia
+
+![Nota de referencia](images/nota_referencia.svg)
 
 Genera una nota continua desde el dispositivo.
 
 Puedes seleccionar la nota, la octava y ajustar la frecuencia de referencia. También hay accesos rápidos a notas habituales.
 
 ## 9. Ajustes, copia de seguridad e idioma
+
+![Ajustes](images/ajustos.svg)
 
 Desde **Ajustes** puedes:
 
