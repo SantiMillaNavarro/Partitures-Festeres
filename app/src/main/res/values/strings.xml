@@ -27,7 +27,7 @@
     <string name="settings_select_root">Seleccionar carpeta arrel</string>
     <string name="settings_create_backup">Crear còpia de seguretat</string>
     <string name="settings_restore_backup">Restaurar còpia</string>
-    <string name="settings_version">Versió 1.6.1</string>
+    <string name="settings_version">Versió 1.6.4</string>
     <string name="settings_backup_desc">La còpia guarda repertoris, favorits, recents, anotacions, zoom i ajustos; no duplica els PDF.</string>
     <string name="settings_saved">Ajustos guardats.</string>
     <string name="sidebar_good_morning">Bon dia</string>
@@ -171,7 +171,7 @@ La biblioteca es crearà automàticament a partir de les carpetes que hi haja di
     <string name="start">Començar</string>
     <string name="tempo">Tempo</string>
     <string name="time_signature">Compàs</string>
-    <string name="metronome_sound_desc">So mecànic de metrònom; el primer temps té un accent lleugerament diferent.</string>
+    <string name="metronome_sound_desc">So sec tipus metrònom mecànic; el primer temps queda accentuat i la resta manté un pols regular.</string>
     <string name="play">Fer sonar</string>
     <string name="stop_note">Parar nota</string>
     <string name="tuning_reference_a4">Referència d’afinació: La4 = %1$d Hz</string>
@@ -276,4 +276,6 @@ La biblioteca es crearà automàticament a partir de les carpetes que hi haja di
     <string name="tuner_status_low">BAIXA</string>
     <string name="tuner_status_high">ALTA</string>
     <string name="metronome_start">Iniciar</string>
+    <string name="app_copyright">© 2026 Santi Milla Navarro</string>
+    <string name="metronome_compound_desc">Compàs compost: el BPM marca el pols principal i cada pols es divideix en tres corxeres. So sec de metrònom mecànic amb accent al començament del compàs.</string>
 </resources>

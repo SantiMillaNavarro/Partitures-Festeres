@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -57,6 +58,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -126,11 +128,10 @@ fun RepertoiresScreen(
                 modifier = Modifier.fillMaxSize(),
                 horizontalArrangement = Arrangement.spacedBy(14.dp),
             ) {
-                Card(
+                FestivePanel(
                     modifier = Modifier.weight(0.34f).fillMaxHeight(),
-                    shape = RoundedCornerShape(20.dp),
-                    backgroundColor = ParchmentCard.copy(alpha = 0.93f),
-                    elevation = 5.dp,
+                    cornerRadius = 20.dp,
+                    backgroundColor = ParchmentCard,
                 ) {
                     Column(Modifier.fillMaxSize().padding(14.dp)) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -189,11 +190,10 @@ fun RepertoiresScreen(
                     }
                 }
 
-                Card(
+                FestivePanel(
                     modifier = Modifier.weight(0.66f).fillMaxHeight(),
-                    shape = RoundedCornerShape(20.dp),
-                    backgroundColor = ParchmentCard.copy(alpha = 0.94f),
-                    elevation = 5.dp,
+                    cornerRadius = 20.dp,
+                    backgroundColor = ParchmentCard,
                 ) {
                     if (selected == null) {
                         EmptyRepertoireDetail(onCreate = { showCreateDialog = true })
@@ -350,7 +350,7 @@ private fun RepertoireSidebarItem(
             .fillMaxWidth()
             .padding(vertical = if (compact) 4.dp else 7.dp)
             .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
-            .background(if (selected) Color.White.copy(alpha = 0.56f) else Color.Transparent, RoundedCornerShape(16.dp))
+            .background(if (selected) ParchmentCard else Color.Transparent, RoundedCornerShape(16.dp))
             .padding(if (compact) 7.dp else 10.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = if (compact) Arrangement.Center else Arrangement.Start,
@@ -373,34 +373,40 @@ private fun RepertoireSidebarItem(
 
 @Composable
 private fun RepertoireCard(repertoire: Repertoire, selected: Boolean, onClick: () -> Unit) {
-    Card(
-        modifier = Modifier.fillMaxWidth().clickable(onClick = onClick),
-        shape = RoundedCornerShape(16.dp),
-        backgroundColor = if (selected) Color.White.copy(alpha = 0.88f) else Color.White.copy(alpha = 0.55f),
-        elevation = if (selected) 5.dp else 1.dp,
+    val shape = RoundedCornerShape(16.dp)
+    val background = if (selected) ParchmentCard.copy(alpha = 0.98f) else ParchmentCard.copy(alpha = 0.72f)
+    val outline = if (selected) AgedGold.copy(alpha = 0.72f) else AgedGold.copy(alpha = 0.22f)
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(shape)
+            .background(background)
+            .border(1.dp, outline, shape)
+            .clickable(onClick = onClick)
+            .padding(12.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
-            Box(
-                modifier = Modifier
-                    .size(44.dp)
-                    .background(if (selected) Burgundy else Navy, CircleShape)
-                    .border(1.dp, AgedGold, CircleShape),
-                contentAlignment = Alignment.Center,
-            ) {
-                Icon(Icons.Default.LibraryMusic, contentDescription = null, tint = Color.White)
-            }
-            Spacer(Modifier.width(11.dp))
-            Column(Modifier.weight(1f)) {
-                Text(
-                    repertoire.name,
-                    color = if (selected) Burgundy else Navy,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                Text(stringResource(R.string.score_count_format, repertoire.entries.size), color = MutedInk, fontSize = 12.sp)
-            }
+        Box(
+            modifier = Modifier
+                .size(44.dp)
+                .background(if (selected) Burgundy else Navy, CircleShape)
+                .border(1.dp, AgedGold, CircleShape),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(Icons.Default.LibraryMusic, contentDescription = null, tint = Color.White)
+        }
+        Spacer(Modifier.width(11.dp))
+        Column(Modifier.weight(1f)) {
+            Text(
+                repertoire.name,
+                color = if (selected) Burgundy else Navy,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Text(stringResource(R.string.score_count_format, repertoire.entries.size), color = MutedInk, fontSize = 12.sp)
         }
     }
 }
@@ -480,7 +486,7 @@ private fun RepertoireDetail(
         Spacer(Modifier.height(8.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(2.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             TextButton(onClick = onRename) {
@@ -498,36 +504,51 @@ private fun RepertoireDetail(
                 Spacer(Modifier.width(3.dp))
                 Text(stringResource(R.string.delete_repertoire), color = Burgundy, fontSize = 13.sp)
             }
-            Spacer(Modifier.weight(1f))
-            Button(
-                onClick = onAdd,
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color.White.copy(alpha = 0.78f), contentColor = Burgundy),
-                elevation = ButtonDefaults.elevation(defaultElevation = 1.dp),
-                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
-            ) {
-                Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(18.dp))
-                Spacer(Modifier.width(4.dp))
-                Text(stringResource(R.string.add_scores), fontSize = 13.sp)
-            }
         }
 
-        Spacer(Modifier.height(4.dp))
-        OutlinedTextField(
-            value = search,
-            onValueChange = { search = it },
-            leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-            trailingIcon = if (search.isNotBlank()) {
-                {
-                    IconButton(onClick = { search = "" }) {
-                        Icon(Icons.Default.Close, contentDescription = stringResource(R.string.search_clear))
-                    }
-                }
-            } else null,
-            placeholder = { Text(stringResource(R.string.search_repertoire)) },
-            singleLine = true,
+        Spacer(Modifier.height(6.dp))
+        Row(
             modifier = Modifier.fillMaxWidth(),
-        )
-        Spacer(Modifier.height(7.dp))
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            OutlinedTextField(
+                value = search,
+                onValueChange = { search = it },
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                trailingIcon = if (search.isNotBlank()) {
+                    {
+                        IconButton(onClick = { search = "" }) {
+                            Icon(Icons.Default.Close, contentDescription = stringResource(R.string.search_clear))
+                        }
+                    }
+                } else null,
+                placeholder = { Text(stringResource(R.string.search_repertoire)) },
+                singleLine = true,
+                modifier = Modifier.weight(1f),
+                colors = festiveTextFieldColors(),
+            )
+            Button(
+                onClick = onAdd,
+                modifier = Modifier
+                    .widthIn(min = 158.dp, max = 180.dp)
+                    .heightIn(min = 56.dp),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Burgundy, contentColor = Color.White),
+                shape = RoundedCornerShape(12.dp),
+                elevation = ButtonDefaults.elevation(defaultElevation = 1.dp),
+                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 8.dp),
+            ) {
+                Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(18.dp))
+                Spacer(Modifier.width(6.dp))
+                Text(
+                    stringResource(R.string.add_scores),
+                    fontSize = 13.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+        }
+        Spacer(Modifier.height(8.dp))
 
         if (repertoire.entries.isEmpty()) {
             Column(
@@ -587,52 +608,55 @@ private fun RepertoireEntryRow(
     onOpen: () -> Unit,
     onRemove: () -> Unit,
 ) {
-    Card(
-        modifier = Modifier.fillMaxWidth().then(if (available) Modifier.clickable(onClick = onOpen) else Modifier),
-        shape = RoundedCornerShape(12.dp),
-        backgroundColor = if (available) Color.White.copy(alpha = 0.76f) else Color(0xFFFFF0EE).copy(alpha = 0.86f),
-        elevation = 1.dp,
+    val shape = RoundedCornerShape(12.dp)
+    val background = if (available) ParchmentCard.copy(alpha = 0.88f) else Color(0xFFFFEEE9).copy(alpha = 0.92f)
+    val outline = if (available) AgedGold.copy(alpha = 0.20f) else Burgundy.copy(alpha = 0.22f)
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(shape)
+            .background(background)
+            .border(1.dp, outline, shape)
+            .then(if (available) Modifier.clickable(onClick = onOpen) else Modifier)
+            .padding(horizontal = 9.dp, vertical = 5.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 9.dp, vertical = 5.dp),
-            verticalAlignment = Alignment.CenterVertically,
+        Text("${index + 1}", color = AgedGold, fontWeight = FontWeight.Bold, modifier = Modifier.width(30.dp))
+        Column(Modifier.weight(1f)) {
+            Text(entryName, color = Navy, fontSize = 15.sp, fontWeight = FontWeight.Medium, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            if (!available) {
+                Text(stringResource(R.string.score_unavailable), color = Burgundy, fontSize = 10.sp, fontWeight = FontWeight.SemiBold)
+            } else if (relativePath.isNotBlank()) {
+                Text(relativePath, color = MutedInk, fontSize = 10.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            }
+        }
+        IconButton(
+            onClick = { onMove(index, index - 1) },
+            enabled = canReorder && index > 0,
+            modifier = Modifier.size(38.dp),
         ) {
-            Text("${index + 1}", color = AgedGold, fontWeight = FontWeight.Bold, modifier = Modifier.width(30.dp))
-            Column(Modifier.weight(1f)) {
-                Text(entryName, color = Navy, fontSize = 15.sp, fontWeight = FontWeight.Medium, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                if (!available) {
-                    Text(stringResource(R.string.score_unavailable), color = Burgundy, fontSize = 10.sp, fontWeight = FontWeight.SemiBold)
-                } else if (relativePath.isNotBlank()) {
-                    Text(relativePath, color = MutedInk, fontSize = 10.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                }
-            }
-            IconButton(
-                onClick = { onMove(index, index - 1) },
-                enabled = canReorder && index > 0,
-                modifier = Modifier.size(38.dp),
-            ) {
-                Icon(
-                    Icons.Default.ArrowUpward,
-                    contentDescription = stringResource(R.string.move_score_up),
-                    tint = if (canReorder && index > 0) Navy else MutedInk.copy(alpha = 0.35f),
-                    modifier = Modifier.size(20.dp),
-                )
-            }
-            IconButton(
-                onClick = { onMove(index, index + 1) },
-                enabled = canReorder && index < itemCount - 1,
-                modifier = Modifier.size(38.dp),
-            ) {
-                Icon(
-                    Icons.Default.ArrowDownward,
-                    contentDescription = stringResource(R.string.move_score_down),
-                    tint = if (canReorder && index < itemCount - 1) Navy else MutedInk.copy(alpha = 0.35f),
-                    modifier = Modifier.size(20.dp),
-                )
-            }
-            IconButton(onClick = onRemove, modifier = Modifier.size(38.dp)) {
-                Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.remove_from_repertoire), tint = Burgundy, modifier = Modifier.size(20.dp))
-            }
+            Icon(
+                Icons.Default.ArrowUpward,
+                contentDescription = stringResource(R.string.move_score_up),
+                tint = if (canReorder && index > 0) Navy else MutedInk.copy(alpha = 0.35f),
+                modifier = Modifier.size(20.dp),
+            )
+        }
+        IconButton(
+            onClick = { onMove(index, index + 1) },
+            enabled = canReorder && index < itemCount - 1,
+            modifier = Modifier.size(38.dp),
+        ) {
+            Icon(
+                Icons.Default.ArrowDownward,
+                contentDescription = stringResource(R.string.move_score_down),
+                tint = if (canReorder && index < itemCount - 1) Navy else MutedInk.copy(alpha = 0.35f),
+                modifier = Modifier.size(20.dp),
+            )
+        }
+        IconButton(onClick = onRemove, modifier = Modifier.size(38.dp)) {
+            Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.remove_from_repertoire), tint = Burgundy, modifier = Modifier.size(20.dp))
         }
     }
 }
@@ -656,6 +680,7 @@ private fun EditRepertoireNameDialog(
                 label = { Text(stringResource(R.string.name)) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
+                colors = festiveTextFieldColors(),
             )
         },
         confirmButton = {
@@ -704,6 +729,7 @@ private fun AddScoresDialog(
                     placeholder = { Text(stringResource(R.string.search_global)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
+                    colors = festiveTextFieldColors(),
                 )
                 Spacer(Modifier.height(10.dp))
                 if (loading) {

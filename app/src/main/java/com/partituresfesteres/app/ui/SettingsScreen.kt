@@ -109,11 +109,10 @@ fun SettingsScreen(
                 modifier = Modifier.fillMaxSize(),
                 horizontalArrangement = Arrangement.spacedBy(14.dp),
             ) {
-                Card(
+                FestivePanel(
                     modifier = Modifier.weight(0.64f).fillMaxHeight(),
-                    shape = RoundedCornerShape(20.dp),
-                    backgroundColor = ParchmentCard.copy(alpha = 0.94f),
-                    elevation = 5.dp,
+                    cornerRadius = 20.dp,
+                    backgroundColor = ParchmentCard,
                 ) {
                     Column(
                         modifier = Modifier
@@ -189,11 +188,10 @@ fun SettingsScreen(
                     }
                 }
 
-                Card(
+                FestivePanel(
                     modifier = Modifier.weight(0.36f).fillMaxHeight(),
-                    shape = RoundedCornerShape(20.dp),
-                    backgroundColor = ParchmentCard.copy(alpha = 0.94f),
-                    elevation = 5.dp,
+                    cornerRadius = 20.dp,
+                    backgroundColor = ParchmentCard,
                 ) {
                     Column(Modifier.fillMaxSize().padding(18.dp)) {
                         Text(stringResource(R.string.settings_library_data), color = Burgundy, fontSize = 21.sp, fontWeight = FontWeight.SemiBold)
@@ -217,6 +215,8 @@ fun SettingsScreen(
                                 Text(stringResource(R.string.partitures_festeres), color = Ink, fontWeight = FontWeight.SemiBold)
                                 Text(stringResource(R.string.settings_version), color = MutedInk, fontSize = 12.sp)
                                 Text(stringResource(R.string.settings_backup_desc), color = MutedInk, fontSize = 11.sp)
+                                Spacer(Modifier.height(6.dp))
+                                Text(stringResource(R.string.app_copyright), color = MutedInk.copy(alpha = 0.82f), fontSize = 10.sp)
                             }
                         }
                     }
@@ -236,20 +236,22 @@ private fun LanguageSelector(
         Text(stringResource(R.string.settings_language), color = Ink, fontSize = 15.sp, fontWeight = FontWeight.Medium)
         Spacer(Modifier.height(5.dp))
         Box {
-            Button(
+            FestiveButton(
                 onClick = { expanded = true },
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color.White.copy(alpha = 0.78f), contentColor = Navy),
-                shape = RoundedCornerShape(12.dp),
+                backgroundColor = ParchmentCard,
+                contentColor = Navy,
+                cornerRadius = 12.dp,
             ) {
                 Text(
                     if (language == LanguageManager.LANGUAGE_SPANISH) {
                         stringResource(R.string.language_spanish)
                     } else {
                         stringResource(R.string.language_valencian)
-                    }
+                    },
+                    color = Navy,
                 )
                 Spacer(Modifier.width(6.dp))
-                Icon(Icons.Default.ArrowDropDown, contentDescription = null)
+                Icon(Icons.Default.ArrowDropDown, contentDescription = null, tint = Navy)
             }
             DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                 DropdownMenuItem(onClick = {
@@ -315,14 +317,15 @@ private fun SettingsActionButton(
     label: String,
     onClick: () -> Unit,
 ) {
-    Button(
+    FestiveButton(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
-        colors = ButtonDefaults.buttonColors(backgroundColor = Color.White.copy(alpha = 0.78f), contentColor = Navy),
-        shape = RoundedCornerShape(12.dp),
+        backgroundColor = ParchmentCard,
+        contentColor = Navy,
+        cornerRadius = 12.dp,
     ) {
-        Icon(icon, contentDescription = null, modifier = Modifier.size(20.dp))
+        Icon(icon, contentDescription = null, modifier = Modifier.size(20.dp), tint = Navy)
         Spacer(Modifier.width(8.dp))
-        Text(label, fontSize = 13.sp)
+        Text(label, fontSize = 13.sp, color = Navy)
     }
 }

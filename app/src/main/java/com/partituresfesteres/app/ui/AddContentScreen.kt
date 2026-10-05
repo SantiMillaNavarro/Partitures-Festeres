@@ -273,25 +273,29 @@ fun AddContentScreen(
             Spacer(Modifier.height(12.dp))
 
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Button(
+                FestiveButton(
                     onClick = ::startScanner,
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Burgundy, contentColor = Color.White),
-                    shape = RoundedCornerShape(14.dp),
-                    contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp),
+                    backgroundColor = Burgundy,
+                    contentColor = Color.White,
+                    cornerRadius = 14.dp,
+                    horizontalPadding = 20.dp,
+                    verticalPadding = 12.dp,
                 ) {
-                    Icon(Icons.Default.CameraAlt, contentDescription = null)
+                    Icon(Icons.Default.CameraAlt, contentDescription = null, tint = Color.White)
                     Spacer(Modifier.width(8.dp))
-                    Text(stringResource(R.string.scan_score))
+                    Text(stringResource(R.string.scan_score), color = Color.White)
                 }
-                Button(
+                FestiveButton(
                     onClick = { importLauncher.launch(arrayOf("application/pdf")) },
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.White.copy(alpha = 0.82f), contentColor = Burgundy),
-                    shape = RoundedCornerShape(14.dp),
-                    contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp),
+                    backgroundColor = ParchmentCard,
+                    contentColor = Burgundy,
+                    cornerRadius = 14.dp,
+                    horizontalPadding = 20.dp,
+                    verticalPadding = 12.dp,
                 ) {
-                    Icon(Icons.Default.PictureAsPdf, contentDescription = null)
+                    Icon(Icons.Default.PictureAsPdf, contentDescription = null, tint = Burgundy)
                     Spacer(Modifier.width(8.dp))
-                    Text(stringResource(R.string.import_pdf))
+                    Text(stringResource(R.string.import_pdf), color = Burgundy)
                 }
             }
 
@@ -300,11 +304,10 @@ fun AddContentScreen(
                 modifier = Modifier.fillMaxSize(),
                 horizontalArrangement = Arrangement.spacedBy(14.dp),
             ) {
-                Card(
+                FestivePanel(
                     modifier = Modifier.weight(0.56f).fillMaxHeight(),
-                    shape = RoundedCornerShape(20.dp),
-                    backgroundColor = ParchmentCard.copy(alpha = 0.93f),
-                    elevation = 5.dp,
+                    cornerRadius = 20.dp,
+                    backgroundColor = ParchmentCard,
                 ) {
                     Column(Modifier.fillMaxSize().padding(18.dp)) {
                         Text(
@@ -327,13 +330,14 @@ fun AddContentScreen(
                                     Text(stringResource(R.string.more_pages, scanPageUris.size - 3), color = MutedInk, fontSize = 13.sp)
                                 }
                                 Spacer(Modifier.height(14.dp))
-                                Button(
+                                FestiveButton(
                                     onClick = ::startScanner,
-                                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.White.copy(alpha = 0.76f), contentColor = Burgundy),
+                                    backgroundColor = ParchmentCard,
+                                    contentColor = Burgundy,
                                 ) {
-                                    Icon(Icons.Default.CameraAlt, contentDescription = null)
+                                    Icon(Icons.Default.CameraAlt, contentDescription = null, tint = Burgundy)
                                     Spacer(Modifier.width(7.dp))
-                                    Text(stringResource(R.string.scan_again))
+                                    Text(stringResource(R.string.scan_again), color = Burgundy)
                                 }
                             }
                             else -> {
@@ -344,11 +348,10 @@ fun AddContentScreen(
                     }
                 }
 
-                Card(
+                FestivePanel(
                     modifier = Modifier.weight(0.44f).fillMaxHeight(),
-                    shape = RoundedCornerShape(20.dp),
-                    backgroundColor = ParchmentCard.copy(alpha = 0.94f),
-                    elevation = 5.dp,
+                    cornerRadius = 20.dp,
+                    backgroundColor = ParchmentCard,
                 ) {
                     Column(Modifier.fillMaxSize().padding(18.dp)) {
                         Text(stringResource(R.string.score_data), color = Burgundy, fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
@@ -359,25 +362,28 @@ fun AddContentScreen(
                             label = { Text(stringResource(R.string.name)) },
                             singleLine = true,
                             modifier = Modifier.fillMaxWidth(),
+                            colors = festiveTextFieldColors(),
                         )
                         Spacer(Modifier.height(10.dp))
                         Text(stringResource(R.string.save_in), color = Ink, fontWeight = FontWeight.Medium)
                         Spacer(Modifier.height(5.dp))
-                        Button(
+                        FestiveButton(
                             onClick = { showFolderDialog = true },
                             enabled = !loadingFolders,
-                            colors = ButtonDefaults.buttonColors(backgroundColor = Color.White.copy(alpha = 0.80f), contentColor = Navy),
+                            backgroundColor = ParchmentCard,
+                            contentColor = Navy,
                             modifier = Modifier.fillMaxWidth(),
                         ) {
-                            Icon(Icons.Default.Folder, contentDescription = null)
+                            Icon(Icons.Default.Folder, contentDescription = null, tint = Navy)
                             Spacer(Modifier.width(8.dp))
                             Text(
                                 selectedFolder.relativePath.ifBlank { rootFolderLabel },
                                 modifier = Modifier.weight(1f),
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
+                                color = Navy,
                             )
-                            Icon(Icons.Default.KeyboardArrowDown, contentDescription = null)
+                            Icon(Icons.Default.KeyboardArrowDown, contentDescription = null, tint = Navy)
                         }
 
                         if (repertoires.isNotEmpty()) {
@@ -391,9 +397,10 @@ fun AddContentScreen(
                                 Text(stringResource(R.string.add_to_repertoire), color = Ink)
                             }
                             if (addToRepertoire) {
-                                Button(
+                                FestiveButton(
                                     onClick = { showRepertoireDialog = true },
-                                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.White.copy(alpha = 0.80f), contentColor = Navy),
+                                    backgroundColor = ParchmentCard,
+                                    contentColor = Navy,
                                     modifier = Modifier.fillMaxWidth(),
                                 ) {
                                     Text(
@@ -401,8 +408,9 @@ fun AddContentScreen(
                                         modifier = Modifier.weight(1f),
                                         maxLines = 1,
                                         overflow = TextOverflow.Ellipsis,
+                                        color = Navy,
                                     )
-                                    Icon(Icons.Default.KeyboardArrowDown, contentDescription = null)
+                                    Icon(Icons.Default.KeyboardArrowDown, contentDescription = null, tint = Navy)
                                 }
                             }
                         }
@@ -499,15 +507,15 @@ private fun EmptySourcePanel(onScan: () -> Unit, onImport: () -> Unit) {
         Text(stringResource(R.string.nothing_prepared_hint), color = MutedInk, fontSize = 13.sp)
         Spacer(Modifier.height(15.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            Button(onClick = onScan, colors = ButtonDefaults.buttonColors(backgroundColor = Burgundy, contentColor = Color.White)) {
-                Icon(Icons.Default.CameraAlt, contentDescription = null)
+            FestiveButton(onClick = onScan, backgroundColor = Burgundy, contentColor = Color.White) {
+                Icon(Icons.Default.CameraAlt, contentDescription = null, tint = Color.White)
                 Spacer(Modifier.width(6.dp))
-                Text(stringResource(R.string.scan))
+                Text(stringResource(R.string.scan), color = Color.White)
             }
-            Button(onClick = onImport, colors = ButtonDefaults.buttonColors(backgroundColor = Color.White.copy(alpha = 0.82f), contentColor = Burgundy)) {
-                Icon(Icons.Default.PictureAsPdf, contentDescription = null)
+            FestiveButton(onClick = onImport, backgroundColor = ParchmentCard, contentColor = Burgundy) {
+                Icon(Icons.Default.PictureAsPdf, contentDescription = null, tint = Burgundy)
                 Spacer(Modifier.width(6.dp))
-                Text(stringResource(R.string.import_pdf))
+                Text(stringResource(R.string.import_pdf), color = Burgundy)
             }
         }
     }

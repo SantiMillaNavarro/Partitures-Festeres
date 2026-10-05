@@ -27,7 +27,7 @@
     <string name="settings_select_root">Seleccionar carpeta raíz</string>
     <string name="settings_create_backup">Crear copia de seguridad</string>
     <string name="settings_restore_backup">Restaurar copia</string>
-    <string name="settings_version">Versión 1.6.1</string>
+    <string name="settings_version">Versión 1.6.4</string>
     <string name="settings_backup_desc">La copia guarda repertorios, favoritos, recientes, anotaciones, zoom y ajustes; no duplica los PDF.</string>
     <string name="settings_saved">Ajustes guardados.</string>
     <string name="sidebar_good_morning">Buenos días</string>
@@ -171,7 +171,7 @@ La biblioteca se creará automáticamente a partir de las carpetas que haya dent
     <string name="start">Comenzar</string>
     <string name="tempo">Tempo</string>
     <string name="time_signature">Compás</string>
-    <string name="metronome_sound_desc">Sonido mecánico de metrónomo; el primer tiempo tiene un acento ligeramente diferente.</string>
+    <string name="metronome_sound_desc">Sonido seco tipo metrónomo mecánico; el primer tiempo queda acentuado y el resto mantiene un pulso regular.</string>
     <string name="play">Hacer sonar</string>
     <string name="stop_note">Parar nota</string>
     <string name="tuning_reference_a4">Referencia de afinación: La4 = %1$d Hz</string>
@@ -276,4 +276,6 @@ La biblioteca se creará automáticamente a partir de las carpetas que haya dent
     <string name="tuner_status_low">BAJA</string>
     <string name="tuner_status_high">ALTA</string>
     <string name="metronome_start">Iniciar</string>
+    <string name="app_copyright">© 2026 Santi Milla Navarro</string>
+    <string name="metronome_compound_desc">Compás compuesto: el BPM marca el pulso principal y cada pulso se divide en tres corcheas. Sonido seco de metrónomo mecánico con acento al comienzo del compás.</string>
 </resources>

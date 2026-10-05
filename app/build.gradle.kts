@@ -11,8 +11,8 @@ android {
         applicationId = "com.partituresfesteres.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 25
-        versionName = "1.6.3"
+        versionCode = 27
+        versionName = "1.6.5"
     }
 
     buildFeatures {

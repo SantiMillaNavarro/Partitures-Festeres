@@ -128,6 +128,7 @@ import com.partituresfesteres.app.model.LibraryPdf
 import com.partituresfesteres.app.ui.theme.Burgundy
 import com.partituresfesteres.app.ui.theme.Ink
 import com.partituresfesteres.app.ui.theme.Navy
+import com.partituresfesteres.app.ui.theme.ParchmentCard
 import kotlinx.coroutines.delay
 import java.util.UUID
 import kotlin.math.abs
@@ -1401,6 +1402,7 @@ fun PdfViewerScreen(
                             maxLines = 5,
                             label = { Text(stringResource(R.string.annotation_text)) },
                             modifier = Modifier.fillMaxWidth(),
+                            colors = festiveTextFieldColors(),
                         )
                         Spacer(Modifier.height(12.dp))
                         Text(stringResource(R.string.annotation_quick_styles), color = Ink, fontWeight = FontWeight.SemiBold)
@@ -2058,21 +2060,23 @@ private fun PdfRepairDialog(
                 Text(stringResource(R.string.rotation), color = Navy, fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
                 Spacer(Modifier.height(6.dp))
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Button(
+                    FestiveButton(
                         onClick = { draft = draft.copy(rotationQuarterTurns = draft.rotationQuarterTurns - 1).normalized() },
-                        colors = ButtonDefaults.buttonColors(backgroundColor = Color.White, contentColor = Navy),
+                        backgroundColor = ParchmentCard,
+                        contentColor = Navy,
                     ) {
-                        Icon(Icons.Default.RotateLeft, contentDescription = null)
+                        Icon(Icons.Default.RotateLeft, contentDescription = null, tint = Navy)
                         Spacer(Modifier.width(5.dp))
-                        Text("−90°")
+                        Text("−90°", color = Navy)
                     }
-                    Button(
+                    FestiveButton(
                         onClick = { draft = draft.copy(rotationQuarterTurns = draft.rotationQuarterTurns + 1).normalized() },
-                        colors = ButtonDefaults.buttonColors(backgroundColor = Color.White, contentColor = Navy),
+                        backgroundColor = ParchmentCard,
+                        contentColor = Navy,
                     ) {
-                        Icon(Icons.Default.RotateRight, contentDescription = null)
+                        Icon(Icons.Default.RotateRight, contentDescription = null, tint = Navy)
                         Spacer(Modifier.width(5.dp))
-                        Text("+90°")
+                        Text("+90°", color = Navy)
                     }
                     Text(
                         "${draft.rotationQuarterTurns * 90}°",
@@ -2113,14 +2117,15 @@ private fun PdfRepairDialog(
                 )
 
                 Spacer(Modifier.height(14.dp))
-                Button(
+                FestiveButton(
                     onClick = onResetCurrent,
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.White, contentColor = Burgundy),
-                    shape = RoundedCornerShape(12.dp),
+                    backgroundColor = ParchmentCard,
+                    contentColor = Burgundy,
+                    cornerRadius = 12.dp,
                 ) {
-                    Icon(Icons.Default.Refresh, contentDescription = null)
+                    Icon(Icons.Default.Refresh, contentDescription = null, tint = Burgundy)
                     Spacer(Modifier.width(6.dp))
-                    Text(stringResource(R.string.reset_page))
+                    Text(stringResource(R.string.reset_page), color = Burgundy)
                 }
             }
         },
@@ -2291,6 +2296,7 @@ private fun ScorePickerDialog(
                     placeholder = { Text(stringResource(R.string.score_name_hint)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
+                    colors = festiveTextFieldColors(),
                 )
                 Spacer(Modifier.height(8.dp))
                 LazyColumn(verticalArrangement = Arrangement.spacedBy(4.dp)) {

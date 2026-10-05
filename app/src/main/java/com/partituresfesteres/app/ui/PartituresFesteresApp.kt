@@ -827,10 +827,9 @@ private fun FirstRunScreen(onSelectRoot: () -> Unit) {
         Spacer(Modifier.height(8.dp))
         AppTitle()
         Spacer(Modifier.height(22.dp))
-        Card(
-            shape = RoundedCornerShape(22.dp),
-            backgroundColor = ParchmentCard.copy(alpha = 0.94f),
-            elevation = 8.dp,
+        FestivePanel(
+            cornerRadius = 22.dp,
+            backgroundColor = ParchmentCard,
         ) {
             Column(
                 modifier = Modifier.padding(horizontal = 44.dp, vertical = 30.dp),
@@ -969,6 +968,7 @@ private fun LibraryShell(
                         }
                     } else null,
                     shape = RoundedCornerShape(18.dp),
+                    colors = festiveTextFieldColors(),
                 )
                 Spacer(Modifier.width(10.dp))
                 IconButton(onClick = onRefresh) {
@@ -1082,11 +1082,12 @@ private fun PdfFileActionsDialog(
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(backgroundColor = Burgundy, contentColor = Color.White),
                     ) { Text(stringResource(R.string.delete_score)) }
-                    Button(
+                    FestiveButton(
                         onClick = onDismiss,
                         modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(backgroundColor = ParchmentCard, contentColor = Ink),
-                    ) { Text(stringResource(R.string.cancel)) }
+                        backgroundColor = ParchmentCard,
+                        contentColor = Ink,
+                    ) { Text(stringResource(R.string.cancel), color = Ink) }
                 }
             },
             confirmButton = {},
@@ -1106,6 +1107,7 @@ private fun PdfFileActionsDialog(
                         singleLine = true,
                         enabled = !working,
                         modifier = Modifier.fillMaxWidth(),
+                        colors = festiveTextFieldColors(),
                     )
                     message?.let {
                         Spacer(Modifier.height(8.dp))
@@ -1130,11 +1132,12 @@ private fun PdfFileActionsDialog(
                 ) { Text(if (working) stringResource(R.string.saving) else stringResource(R.string.save)) }
             },
             dismissButton = {
-                Button(
+                FestiveButton(
                     onClick = { stage = PdfActionStage.MENU },
                     enabled = !working,
-                    colors = ButtonDefaults.buttonColors(backgroundColor = ParchmentCard, contentColor = Ink),
-                ) { Text(stringResource(R.string.back)) }
+                    backgroundColor = ParchmentCard,
+                    contentColor = Ink,
+                ) { Text(stringResource(R.string.back), color = Ink) }
             },
             shape = RoundedCornerShape(20.dp),
             backgroundColor = ParchmentCard,
@@ -1154,7 +1157,7 @@ private fun PdfFileActionsDialog(
                         verticalArrangement = Arrangement.spacedBy(7.dp),
                     ) {
                         destinations.forEach { destination ->
-                            Button(
+                            FestiveButton(
                                 onClick = {
                                     if (destination.relativePath == pdf.relativePath) {
                                         message = context.getString(R.string.score_already_folder)
@@ -1175,15 +1178,14 @@ private fun PdfFileActionsDialog(
                                 },
                                 enabled = !working,
                                 modifier = Modifier.fillMaxWidth(),
-                                colors = ButtonDefaults.buttonColors(
-                                    backgroundColor = if (destination.relativePath == pdf.relativePath) Color.LightGray else Color.White,
-                                    contentColor = Navy,
-                                ),
+                                backgroundColor = if (destination.relativePath == pdf.relativePath) ParchmentCard.copy(alpha = 0.55f) else ParchmentCard,
+                                contentColor = Navy,
                             ) {
                                 Text(
                                     if (destination.relativePath.isBlank()) rootLabel else destination.relativePath,
                                     maxLines = 2,
                                     overflow = TextOverflow.Ellipsis,
+                                    color = Navy,
                                 )
                             }
                         }
@@ -1196,11 +1198,12 @@ private fun PdfFileActionsDialog(
             },
             confirmButton = {},
             dismissButton = {
-                Button(
+                FestiveButton(
                     onClick = { stage = PdfActionStage.MENU },
                     enabled = !working,
-                    colors = ButtonDefaults.buttonColors(backgroundColor = ParchmentCard, contentColor = Ink),
-                ) { Text(stringResource(R.string.back)) }
+                    backgroundColor = ParchmentCard,
+                    contentColor = Ink,
+                ) { Text(stringResource(R.string.back), color = Ink) }
             },
             shape = RoundedCornerShape(20.dp),
             backgroundColor = ParchmentCard,
@@ -1236,11 +1239,12 @@ private fun PdfFileActionsDialog(
                             enabled = !working && destination != null,
                             colors = ButtonDefaults.buttonColors(backgroundColor = Burgundy, contentColor = Color.White),
                         ) { Text(stringResource(R.string.replace)) }
-                        Button(
+                        FestiveButton(
                             onClick = { stage = PdfActionStage.MOVE },
                             enabled = !working,
-                            colors = ButtonDefaults.buttonColors(backgroundColor = ParchmentCard, contentColor = Ink),
-                        ) { Text(stringResource(R.string.cancel)) }
+                            backgroundColor = ParchmentCard,
+                            contentColor = Ink,
+                        ) { Text(stringResource(R.string.cancel), color = Ink) }
                     }
                 },
                 shape = RoundedCornerShape(20.dp),
@@ -1286,11 +1290,12 @@ private fun PdfFileActionsDialog(
                 ) { Text(if (working) stringResource(R.string.deleting) else stringResource(R.string.delete_score)) }
             },
             dismissButton = {
-                Button(
+                FestiveButton(
                     onClick = { stage = PdfActionStage.MENU },
                     enabled = !working,
-                    colors = ButtonDefaults.buttonColors(backgroundColor = ParchmentCard, contentColor = Ink),
-                ) { Text(stringResource(R.string.cancel)) }
+                    backgroundColor = ParchmentCard,
+                    contentColor = Ink,
+                ) { Text(stringResource(R.string.cancel), color = Ink) }
             },
             shape = RoundedCornerShape(20.dp),
             backgroundColor = ParchmentCard,
@@ -1398,7 +1403,7 @@ private fun SidebarItem(
             .fillMaxWidth()
             .padding(vertical = if (compact) 4.dp else 7.dp)
             .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
-            .background(if (selected) Color.White.copy(alpha = 0.56f) else Color.Transparent, RoundedCornerShape(16.dp))
+            .background(if (selected) ParchmentCard else Color.Transparent, RoundedCornerShape(16.dp))
             .padding(if (compact) 7.dp else 10.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = if (compact) Arrangement.Center else Arrangement.Start,
@@ -1484,13 +1489,14 @@ private fun SpecialCollectionShell(
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(18.dp),
+                colors = festiveTextFieldColors(),
             )
             Spacer(Modifier.height(16.dp))
             if (filtered.isEmpty()) {
-                Card(
+                FestivePanel(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(20.dp),
-                    backgroundColor = ParchmentCard.copy(alpha = 0.92f),
+                    cornerRadius = 20.dp,
+                    backgroundColor = ParchmentCard,
                 ) {
                     Column(Modifier.padding(30.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                         Icon(
@@ -1583,14 +1589,13 @@ private fun SectionLabel(text: String) {
 
 @Composable
 private fun FolderCard(folder: LibraryFolder, onClick: () -> Unit) {
-    Card(
+    FestivePanel(
         modifier = Modifier
             .fillMaxWidth()
             .height(172.dp)
             .clickable(onClick = onClick),
-        shape = RoundedCornerShape(20.dp),
-        backgroundColor = ParchmentCard.copy(alpha = 0.93f),
-        elevation = 6.dp,
+        cornerRadius = 20.dp,
+        backgroundColor = ParchmentCard,
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -1631,13 +1636,12 @@ private fun PdfCard(
     onToggleFavorite: () -> Unit,
     onManage: (() -> Unit)? = null,
 ) {
-    Card(
+    FestivePanel(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick),
-        shape = RoundedCornerShape(18.dp),
-        backgroundColor = ParchmentCard.copy(alpha = 0.95f),
-        elevation = 5.dp,
+        cornerRadius = 18.dp,
+        backgroundColor = ParchmentCard,
     ) {
         Column(modifier = Modifier.padding(10.dp)) {
             Box {
@@ -1722,10 +1726,10 @@ private fun PdfThumbnail(uri: Uri, repository: PdfThumbnailRepository) {
 
 @Composable
 private fun EmptyDirectoryPanel(isRoot: Boolean) {
-    Card(
+    FestivePanel(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(20.dp),
-        backgroundColor = ParchmentCard.copy(alpha = 0.92f),
+        cornerRadius = 20.dp,
+        backgroundColor = ParchmentCard,
     ) {
         Column(Modifier.padding(28.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             Icon(Icons.Default.LibraryMusic, contentDescription = null, modifier = Modifier.size(52.dp), tint = Burgundy)
@@ -1742,10 +1746,10 @@ private fun EmptyDirectoryPanel(isRoot: Boolean) {
 
 @Composable
 private fun ErrorPanel(message: String, onChangeRoot: () -> Unit) {
-    Card(
+    FestivePanel(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(20.dp),
-        backgroundColor = ParchmentCard.copy(alpha = 0.96f),
+        cornerRadius = 20.dp,
+        backgroundColor = ParchmentCard,
     ) {
         Column(Modifier.padding(26.dp)) {
             Text(stringResource(R.string.library_open_error), fontSize = 20.sp, color = Burgundy, fontWeight = FontWeight.Bold)
