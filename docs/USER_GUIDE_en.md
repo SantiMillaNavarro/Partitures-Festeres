@@ -6,7 +6,6 @@ This guide explains the main features of **Partitures Festeres** and how to use 
 
 > Screenshots were taken from a recent version of the application. Some wording or visual details may differ slightly between versions.
 
-![Application overview](images/manual_overview.jpg)
 
 ## 1. First setup
 
@@ -19,6 +18,8 @@ The root folder can later be changed from **Settings**.
 ## 2. Library
 
 The **Library** is the main access point for your scores.
+
+![Library](images/biblioteca.jpg)
 
 From here you can:
 
@@ -33,6 +34,8 @@ Folders are detected dynamically, so categories do not need to be recreated insi
 
 **Repertoires** let you prepare custom score lists for a performance, concert, parade, procession or any other event.
 
+![Repertoires](images/repertoris.jpg)
+
 You can:
 
 - create multiple repertoires;
@@ -45,13 +48,19 @@ You can:
 
 The **Recent** section shows the scores you opened most recently, providing quick access without searching the library again.
 
+![Recent](images/recents.svg)
+
 ## 5. Favourites
 
 Frequently used scores can be marked as **Favourites** for quick access.
 
+![Favourites](images/favorits.svg)
+
 ## 6. Scan and import
 
 Use the **+** button to add new scores.
+
+![Scan and import](images/escanejar_importar.svg)
 
 You can:
 
@@ -80,17 +89,25 @@ The **Tools** section includes utilities for rehearsals and performances.
 
 ### Tuner
 
+![Tuner](images/afinador.svg)
+
 Uses the device microphone to show pitch deviation from the nearest note. The tuning reference can be adjusted.
 
 ### Metronome
+
+![Metronome](images/metronom.svg)
 
 Lets you choose tempo and time signature and start a regular pulse.
 
 ### Reference note
 
+![Reference note](images/nota_referencia.svg)
+
 Generates a continuous reference note from the device. You can select note, octave and reference frequency, with shortcuts for common notes.
 
 ## 9. Settings, backup and language
+
+![Settings](images/ajustos.svg)
 
 From **Settings** you can:
 
