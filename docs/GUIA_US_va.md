@@ -50,7 +50,7 @@ Això permet preparar abans d'eixir a tocar exactament les obres que necessitar�
 
 La secció **Recents** mostra les últimes partitures consultades.
 
-![Recents](images/recents.svg)
+![Recents](images/recents.jpg)
 
 És útil per tornar ràpidament a una obra sense haver de buscar-la de nou dins de la biblioteca.
 
@@ -58,7 +58,7 @@ La secció **Recents** mostra les últimes partitures consultades.
 
 Pots marcar les partitures que utilitzes més sovint com a **Favorits**.
 
-![Favorits](images/favorits.svg)
+![Favorits](images/favorits.jpg)
 
 Aquesta secció ofereix un accés directe a les obres que vols tindre sempre localitzades.
 
@@ -66,7 +66,7 @@ Aquesta secció ofereix un accés directe a les obres que vols tindre sempre loc
 
 El botó **+** obri les opcions per incorporar noves partitures.
 
-![Escanejar i importar partitures](images/escanejar_importar.svg)
+![Escanejar i importar partitures](images/escanejar_importar.jpg)
 
 Pots:
 
@@ -95,7 +95,7 @@ La secció **Eines** incorpora utilitats pensades per a l'assaig i l'actuació.
 
 ### Afinador
 
-![Afinador](images/afinador.svg)
+![Afinador](images/afinador.jpg)
 
 Utilitza el micròfon del dispositiu per mostrar la desviació de la nota respecte a l'afinació correcta.
 
@@ -103,13 +103,13 @@ La referència d'afinació es pot ajustar segons les necessitats del grup.
 
 ### Metrònom
 
-![Metrònom](images/metronom.svg)
+![Metrònom](images/metronom.jpg)
 
 Permet seleccionar el tempo i el compàs i iniciar un pols regular per a l'estudi o assaig.
 
 ### Nota de referència
 
-![Nota de referència](images/nota_referencia.svg)
+![Nota de referència](images/nota_referencia.jpg)
 
 Genera una nota contínua des del dispositiu.
 
@@ -117,7 +117,7 @@ Pots seleccionar la nota, l'octava i ajustar la freqüència de referència. Tam
 
 ## 9. Ajustos, còpia de seguretat i idioma
 
-![Ajustos](images/ajustos.svg)
+![Ajustos](images/ajustos.jpg)
 
 Des d'**Ajustos** pots:
 
