@@ -19,7 +19,7 @@ The root folder can later be changed from **Settings**.
 
 The **Library** is the main access point for your scores.
 
-![Library](images/biblioteca.jpg)
+![Library](images/biblioteca.png)
 
 From here you can:
 
@@ -34,7 +34,7 @@ Folders are detected dynamically, so categories do not need to be recreated insi
 
 **Repertoires** let you prepare custom score lists for a performance, concert, parade, procession or any other event.
 
-![Repertoires](images/repertoris.jpg)
+![Repertoires](images/repertoris.png)
 
 You can:
 
@@ -48,19 +48,19 @@ You can:
 
 The **Recent** section shows the scores you opened most recently, providing quick access without searching the library again.
 
-![Recent](images/recents.jpg)
+![Recent](images/recents.png)
 
 ## 5. Favourites
 
 Frequently used scores can be marked as **Favourites** for quick access.
 
-![Favourites](images/favorits.jpg)
+![Favourites](images/favorits.png)
 
 ## 6. Scan and import
 
 Use the **+** button to add new scores.
 
-![Scan and import](images/escanejar_importar.jpg)
+![Scan and import](images/escanejar_importar.png)
 
 You can:
 
@@ -89,7 +89,7 @@ The **Tools** section includes utilities for rehearsals and performances.
 
 ### Tuner
 
-![Tuner](images/afinador.jpg)
+![Tuner](images/afinador.png)
 
 Uses the device microphone to show pitch deviation from the nearest note. The tuning reference can be adjusted.
 
@@ -101,13 +101,13 @@ Lets you choose tempo and time signature and start a regular pulse.
 
 ### Reference note
 
-![Reference note](images/nota_referencia.jpg)
+![Reference note](images/nota_referencia.png)
 
 Generates a continuous reference note from the device. You can select note, octave and reference frequency, with shortcuts for common notes.
 
 ## 9. Settings, backup and language
 
-![Settings](images/ajustos.jpg)
+![Settings](images/ajustos.png)
 
 From **Settings** you can:
 
