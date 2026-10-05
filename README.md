@@ -1,5 +1,7 @@
 # Partitures Festeres
 
+**Valencià** · [Español](README_es.md) · [English](README_en.md)
+
 Aplicació Android pensada per facilitar la consulta i gestió de partitures festeres des de tauletes i dispositius Android.
 
 ## Estat del projecte
