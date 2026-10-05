@@ -85,8 +85,18 @@ Aquesta és una llicència pròpia de tipus *source-available* i **no és una ll
 
 Consulta el fitxer [LICENSE](LICENSE) per a conéixer les condicions completes.
 
+## Ús d'intel·ligència artificial
+
+Aquest projecte s'ha desenvolupat amb una participació significativa d'eines d'intel·ligència artificial.
+
+El **codi de l'aplicació ha sigut generat de manera iterativa amb ChatGPT, d'OpenAI, a partir de les especificacions, requisits, decisions de disseny, proves i indicacions proporcionades per Santi Milla Navarro**.
+
+Santi Milla Navarro ha dirigit el desenvolupament funcional del projecte: ha definit els objectius i el comportament de l'aplicació, ha pres les decisions de disseny, ha provat les diferents versions en dispositius reals, ha detectat errors i ha indicat les correccions i millores necessàries. ChatGPT ha actuat com a eina de desenvolupament, generant i modificant el codi d'acord amb aquestes indicacions i ajudant també en tasques de documentació, revisió i organització del projecte.
+
+Aquesta informació es declara expressament per garantir la màxima transparència sobre el procés de desenvolupament.
+
 ## Autor
 
 © 2026 Santi Milla Navarro
 
-Partitures Festeres és un projecte dirigit i desenvolupat per **Santi Milla Navarro**, amb assistència d'eines d'intel·ligència artificial durant el procés de desenvolupament.
+Partitures Festeres és un projecte dirigit per **Santi Milla Navarro**.
