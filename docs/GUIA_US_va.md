@@ -19,7 +19,7 @@ La carpeta arrel es pot canviar més tard des d'**Ajustos**.
 
 La secció **Biblioteca** és el punt principal d'accés a les partitures.
 
-![Biblioteca](images/biblioteca.jpg)
+![Biblioteca](images/biblioteca.png)
 
 Des d'ací pots:
 
@@ -34,7 +34,7 @@ L'aplicació llig dinàmicament les carpetes existents, per tant no és necessar
 
 Els **Repertoris** permeten crear llistes pròpies de partitures per a una actuació concreta, concert, entrada, processó o qualsevol altra situació.
 
-![Repertoris](images/repertoris.jpg)
+![Repertoris](images/repertoris.png)
 
 Pots:
 
@@ -50,7 +50,7 @@ Això permet preparar abans d'eixir a tocar exactament les obres que necessitar�
 
 La secció **Recents** mostra les últimes partitures consultades.
 
-![Recents](images/recents.jpg)
+![Recents](images/recents.png)
 
 És útil per tornar ràpidament a una obra sense haver de buscar-la de nou dins de la biblioteca.
 
@@ -58,7 +58,7 @@ La secció **Recents** mostra les últimes partitures consultades.
 
 Pots marcar les partitures que utilitzes més sovint com a **Favorits**.
 
-![Favorits](images/favorits.jpg)
+![Favorits](images/favorits.png)
 
 Aquesta secció ofereix un accés directe a les obres que vols tindre sempre localitzades.
 
@@ -66,7 +66,7 @@ Aquesta secció ofereix un accés directe a les obres que vols tindre sempre loc
 
 El botó **+** obri les opcions per incorporar noves partitures.
 
-![Escanejar i importar partitures](images/escanejar_importar.jpg)
+![Escanejar i importar partitures](images/escanejar_importar.png)
 
 Pots:
 
@@ -95,7 +95,7 @@ La secció **Eines** incorpora utilitats pensades per a l'assaig i l'actuació.
 
 ### Afinador
 
-![Afinador](images/afinador.jpg)
+![Afinador](images/afinador.png)
 
 Utilitza el micròfon del dispositiu per mostrar la desviació de la nota respecte a l'afinació correcta.
 
@@ -109,7 +109,7 @@ Permet seleccionar el tempo i el compàs i iniciar un pols regular per a l'estud
 
 ### Nota de referència
 
-![Nota de referència](images/nota_referencia.jpg)
+![Nota de referència](images/nota_referencia.png)
 
 Genera una nota contínua des del dispositiu.
 
@@ -117,7 +117,7 @@ Pots seleccionar la nota, l'octava i ajustar la freqüència de referència. Tam
 
 ## 9. Ajustos, còpia de seguretat i idioma
 
-![Ajustos](images/ajustos.jpg)
+![Ajustos](images/ajustos.png)
 
 Des d'**Ajustos** pots:
 
