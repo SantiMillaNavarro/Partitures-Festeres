@@ -28,6 +28,10 @@ Entre las funciones principales del proyecto se encuentran:
 - Compatibilidad con un amplio abanico de versiones de Android.
 - Evolución progresiva del proyecto a partir de pruebas, sugerencias y contribuciones.
 
+## Guía de uso
+
+Consulta la [guía de uso](docs/GUIA_US_es.md) para conocer las funciones principales de la aplicación con ejemplos visuales.
+
 ## Descargas
 
 Cuando haya versiones estables disponibles, se publicarán en el apartado **Releases** del repositorio.
