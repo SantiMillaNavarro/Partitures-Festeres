@@ -2,58 +2,86 @@
 
 [Valencià](README.md) · **Español** · [English](README_en.md)
 
-Aplicación Android pensada para facilitar la consulta y gestión de partituras festeras desde tabletas y dispositivos Android.
+Aplicación Android para organizar, consultar y utilizar partituras festeras desde tabletas y dispositivos Android, pensada especialmente para ensayos, pasacalles, conciertos y otras situaciones en las que es necesario llevar un repertorio amplio de forma cómoda.
 
 ## Estado del proyecto
 
-El proyecto se encuentra actualmente en desarrollo.
+**Partitures Festeres está en desarrollo activo y ya dispone de versiones estables utilizables.**
 
-Este repositorio contendrá el código fuente de la aplicación, la documentación del proyecto y, cuando haya versiones estables disponibles, enlaces a las versiones publicadas en GitHub Releases.
+Versión estable actual: **v1.6.5** (versionCode 27).
+
+La versión más reciente puede descargarse desde [GitHub Releases](https://github.com/SantiMillaNavarro/Partitures-Festeres/releases/latest).
 
 ## Objetivo
 
-Partitures Festeres nace con el objetivo de facilitar la organización, el acceso y la consulta de partituras festeras, especialmente en aquellas situaciones en las que los músicos salen a tocar fuera del local de ensayo o necesitan llevar un repertorio amplio de forma cómoda y ordenada.
+El proyecto nace con el objetivo de reducir la dependencia de carpetas físicas, papeles y archivos dispersos, permitiendo mantener una biblioteca de partituras organizada y accesible directamente desde una tableta Android.
 
-La aplicación pretende ofrecer una alternativa sencilla al transporte y gestión manual de carpetas, papeles o archivos dispersos, permitiendo mantener las partituras organizadas por carpetas y consultarlas rápidamente desde una tableta o dispositivo Android.
+La aplicación respeta la estructura real de carpetas del dispositivo y está diseñada para que el músico pueda llegar rápidamente a la partitura que necesita.
 
-## Funciones previstas
+## Funciones actuales
 
-Entre las funciones principales del proyecto se encuentran:
+Entre las funciones disponibles se encuentran:
 
-- Biblioteca basada en carpetas reales del dispositivo.
-- Detección dinámica de subcarpetas y repertorio.
-- Visualización de partituras.
-- Adaptación del visor a orientación vertical y horizontal.
-- Interfaz en valenciano.
-- Compatibilidad con un amplio abanico de versiones de Android.
-- Evolución progresiva del proyecto a partir de pruebas, sugerencias y contribuciones.
+- **Biblioteca basada en carpetas reales**, con detección dinámica de subcarpetas.
+- **Repertorios** para agrupar y preparar conjuntos de partituras.
+- Acceso rápido a **Recientes** y **Favoritos**.
+- **Búsqueda** de partituras.
+- **Importación y escaneo** de documentos.
+- **Visor de PDF** adaptado a orientación vertical y horizontal.
+- Ajustes de visualización y **anotaciones** sobre las partituras.
+- Conservación de estados y preferencias de lectura.
+- **Copias de seguridad** de la configuración y datos gestionados por la aplicación.
+- Herramientas musicales integradas: **afinador**, **metrónomo** y **nota de referencia**.
+- **Widget** para acceso rápido.
+- Interfaz disponible en **valenciano y castellano**.
+
+## Compatibilidad
+
+- Android **8.0 (API 26)** o posterior.
+- targetSdk: 36
+- compileSdk: 36
+
+La aplicación está pensada especialmente para tabletas, aunque también puede ejecutarse en otros dispositivos Android compatibles.
 
 ## Guía de uso
 
-Consulta la [guía de uso](docs/GUIA_US_es.md) para conocer las funciones principales de la aplicación con ejemplos visuales.
+Consulta la [guía de uso en español](docs/GUIA_US_es.md) para conocer las funciones principales de la aplicación con ejemplos visuales.
 
-## Descargas
+También están disponibles:
 
-Cuando haya versiones estables disponibles, se publicarán en el apartado **Releases** del repositorio.
+- [Guia d'ús en valencià](docs/GUIA_US_va.md)
+- [User guide in English](docs/USER_GUIDE_en.md)
 
-Las personas que solo quieran utilizar la aplicación podrán descargar allí el archivo APK correspondiente sin necesidad de compilar el proyecto.
+## Descarga e instalación
 
-## Colaboración
+La versión estable más reciente está disponible en el apartado [**Releases**](https://github.com/SantiMillaNavarro/Partitures-Festeres/releases/latest).
 
-Las propuestas de mejora, detección de errores y contribuciones al código son bienvenidas.
+Para instalar la aplicación:
 
-Se podrán utilizar:
+1. descarga el APK de la última Release;
+2. ábrelo en el dispositivo Android;
+3. si Android lo solicita, autoriza temporalmente la instalación de aplicaciones desde esa fuente.
 
-- **Issues** para comunicar errores, sugerencias o ideas.
-- **Pull Requests** para proponer modificaciones del código.
+No es necesario compilar el proyecto para utilizar la aplicación.
 
-Las contribuciones podrán ser revisadas antes de incorporarse a la rama principal del proyecto.
+## Desarrollo y colaboración
+
+El código fuente y la documentación del proyecto se mantienen en este repositorio.
+
+Las propuestas de mejora, detección de errores y contribuciones son bienvenidas:
+
+- utiliza **Issues** para comunicar errores, sugerencias o ideas;
+- utiliza **Pull Requests** para proponer modificaciones del código.
+
+Las contribuciones pueden ser revisadas antes de incorporarse a la rama principal.
 
 ## Licencia
 
-El código fuente de este proyecto se publica bajo una licencia propia de tipo **source-available para uso no comercial**.
+Este proyecto se distribuye bajo la **Partitures Festeres — Non-Commercial Source-Available License**.
 
-Se permite consultar, estudiar y modificar el código para usos personales, educativos o de colaboración con el proyecto, pero no se permite su explotación comercial sin autorización expresa del titular de los derechos.
+La licencia permite consultar, estudiar, ejecutar, modificar y crear forks del proyecto para usos personales, educativos, no comerciales o de colaboración, pero **no permite la explotación comercial sin autorización expresa** del titular de los derechos.
+
+Se trata de una licencia propia de tipo *source-available* y **no es una licencia Open Source aprobada por la OSI**.
 
 Consulta el archivo [LICENSE](LICENSE) para conocer las condiciones completas.
 
@@ -61,4 +89,4 @@ Consulta el archivo [LICENSE](LICENSE) para conocer las condiciones completas.
 
 © 2026 Santi Milla Navarro
 
-Partitures Festeres es un proyecto dirigido y desarrollado por Santi Milla Navarro con asistencia de herramientas de inteligencia artificial durante el proceso de desarrollo.
+Partitures Festeres es un proyecto dirigido y desarrollado por **Santi Milla Navarro**, con asistencia de herramientas de inteligencia artificial durante el proceso de desarrollo.
