@@ -103,7 +103,7 @@ La referencia de afinación puede ajustarse según las necesidades del grupo.
 
 ### Metrónomo
 
-![Metrónomo](images/metronom.jpg)
+![Metrónomo](images/metronom.png)
 
 Permite seleccionar el tempo y el compás e iniciar un pulso regular para el estudio o ensayo.
 
