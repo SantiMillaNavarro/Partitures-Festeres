@@ -6,7 +6,6 @@ Aquesta guia explica les funcions principals de **Partitures Festeres** i com ut
 
 > Les captures corresponen a una versió recent de l'aplicació. Alguns textos o detalls visuals poden variar lleugerament entre versions.
 
-![Vista general de l'aplicació](images/manual_overview.jpg)
 
 ## 1. Primera configuració
 
@@ -20,6 +19,8 @@ La carpeta arrel es pot canviar més tard des d'**Ajustos**.
 
 La secció **Biblioteca** és el punt principal d'accés a les partitures.
 
+![Biblioteca](images/biblioteca.jpg)
+
 Des d'ací pots:
 
 - navegar per les carpetes de partitures;
@@ -32,6 +33,8 @@ L'aplicació llig dinàmicament les carpetes existents, per tant no és necessar
 ## 3. Repertoris
 
 Els **Repertoris** permeten crear llistes pròpies de partitures per a una actuació concreta, concert, entrada, processó o qualsevol altra situació.
+
+![Repertoris](images/repertoris.jpg)
 
 Pots:
 
@@ -47,17 +50,23 @@ Això permet preparar abans d'eixir a tocar exactament les obres que necessitar�
 
 La secció **Recents** mostra les últimes partitures consultades.
 
+![Recents](images/recents.svg)
+
 És útil per tornar ràpidament a una obra sense haver de buscar-la de nou dins de la biblioteca.
 
 ## 5. Favorits
 
 Pots marcar les partitures que utilitzes més sovint com a **Favorits**.
 
+![Favorits](images/favorits.svg)
+
 Aquesta secció ofereix un accés directe a les obres que vols tindre sempre localitzades.
 
 ## 6. Escanejar i importar partitures
 
 El botó **+** obri les opcions per incorporar noves partitures.
+
+![Escanejar i importar partitures](images/escanejar_importar.svg)
 
 Pots:
 
@@ -86,21 +95,29 @@ La secció **Eines** incorpora utilitats pensades per a l'assaig i l'actuació.
 
 ### Afinador
 
+![Afinador](images/afinador.svg)
+
 Utilitza el micròfon del dispositiu per mostrar la desviació de la nota respecte a l'afinació correcta.
 
 La referència d'afinació es pot ajustar segons les necessitats del grup.
 
 ### Metrònom
 
+![Metrònom](images/metronom.svg)
+
 Permet seleccionar el tempo i el compàs i iniciar un pols regular per a l'estudi o assaig.
 
 ### Nota de referència
+
+![Nota de referència](images/nota_referencia.svg)
 
 Genera una nota contínua des del dispositiu.
 
 Pots seleccionar la nota, l'octava i ajustar la freqüència de referència. També hi ha accessos ràpids a notes habituals.
 
 ## 9. Ajustos, còpia de seguretat i idioma
+
+![Ajustos](images/ajustos.svg)
 
 Des d'**Ajustos** pots:
 
