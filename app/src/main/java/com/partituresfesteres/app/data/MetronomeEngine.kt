@@ -20,20 +20,22 @@ data class MetronomeSignature(
     val subdivisionsPerBeat: Int = 1,
 ) {
     val eventsPerBar: Int get() = mainBeats * subdivisionsPerBeat
+
+    // Visual/UI helpers only. They do not introduce extra metronome sounds.
     val isCompound: Boolean get() = subdivisionsPerBeat > 1
 
-    fun isGroupStart(eventIndex: Int): Boolean =
-        eventIndex % subdivisionsPerBeat == 0
+    fun isGroupStart(eventIndex: Int): Boolean {
+        val subdivisions = subdivisionsPerBeat.coerceAtLeast(1)
+        return eventIndex % subdivisions == 0
+    }
 }
 
 /**
  * Sample-accurate metronome based on a looping AudioTrack buffer.
  *
- * The previous implementation fired SoundPool samples from a coroutine. That
- * works for casual UI sounds but Android scheduling jitter can make a metronome
- * feel irregular, especially after tempo changes. Here the whole bar is mixed
- * into PCM once and looped by AudioTrack itself, so pulse spacing is defined by
- * sample positions rather than by UI/coroutine timing.
+ * There are deliberately only two sounds: a stronger downbeat and one
+ * identical weak click for every other event. This keeps compound meters
+ * readable instead of introducing extra group/subdivision timbres.
  */
 class MetronomeEngine {
     companion object {
@@ -58,13 +60,7 @@ class MetronomeEngine {
         val pcm = ShortArray(totalFrames)
 
         for (event in 0 until events) {
-            val strength = when {
-                event == 0 -> ClickStrength.DOWNBEAT
-                signature.isCompound && signature.isGroupStart(event) -> ClickStrength.GROUP
-                signature.isCompound -> ClickStrength.SUBDIVISION
-                else -> ClickStrength.BEAT
-            }
-            val click = mechanicalClick(strength, event)
+            val click = mechanicalClick(strong = event == 0)
             val offset = event * framesPerEvent
             val max = minOf(click.size, pcm.size - offset)
             for (i in 0 until max) {
@@ -119,55 +115,31 @@ class MetronomeEngine {
         return ((elapsed / eventIntervalNanos) % eventCount).toInt()
     }
 
-    private enum class ClickStrength { DOWNBEAT, GROUP, BEAT, SUBDIVISION }
-
     /**
-     * Short wooden tick/tock approximation: a sharp impulse, two damped body
-     * resonances and a tiny deterministic noise component. It is intentionally
-     * dry (no reverb), closer to a mechanical pendulum metronome than a phone
-     * notification tone.
+     * Two deliberately stable timbres only: strong first beat and weak rest.
+     * No alternating tick/tock and no special sound for compound subdivisions.
      */
-    private fun mechanicalClick(strength: ClickStrength, eventIndex: Int): ShortArray {
-        val durationSeconds = when (strength) {
-            ClickStrength.DOWNBEAT -> 0.060
-            ClickStrength.GROUP -> 0.050
-            ClickStrength.BEAT -> 0.045
-            ClickStrength.SUBDIVISION -> 0.032
-        }
+    private fun mechanicalClick(strong: Boolean): ShortArray {
+        val durationSeconds = if (strong) 0.058 else 0.043
         val count = (SAMPLE_RATE * durationSeconds).roundToInt()
         val out = ShortArray(count)
+        val amplitude = if (strong) 0.88 else 0.53
+        val bodyHz = if (strong) 1_520.0 else 1_820.0
+        val upperHz = bodyHz * 1.80
 
-        val amplitude = when (strength) {
-            ClickStrength.DOWNBEAT -> 0.88
-            ClickStrength.GROUP -> 0.66
-            ClickStrength.BEAT -> 0.58
-            ClickStrength.SUBDIVISION -> 0.34
-        }
-
-        // A slight tick/tock alternation makes the sound feel less electronic.
-        val alternating = if (eventIndex % 2 == 0) 1.0 else 0.92
-        val bodyHz = when (strength) {
-            ClickStrength.DOWNBEAT -> 1_540.0
-            ClickStrength.GROUP -> 1_680.0
-            ClickStrength.BEAT -> 1_820.0 * alternating
-            ClickStrength.SUBDIVISION -> 2_100.0
-        }
-        val upperHz = bodyHz * 1.83
-
-        var noiseState = 0x13579BDF xor (eventIndex * 0x45d9f3b)
+        var noiseState = if (strong) 0x13579BDF else 0x2468ACE
         for (i in 0 until count) {
             val t = i.toDouble() / SAMPLE_RATE.toDouble()
-            val envelope = exp(-t * if (strength == ClickStrength.SUBDIVISION) 120.0 else 82.0)
-            val attack = (i / 16.0).coerceAtMost(1.0)
+            val envelope = exp(-t * if (strong) 82.0 else 94.0)
+            val attack = (i / 14.0).coerceAtMost(1.0)
 
-            // Cheap deterministic pseudo-random noise, avoiding allocations.
             noiseState = noiseState * 1664525 + 1013904223
             val noise = (((noiseState ushr 9) and 0x7FFFFF) / 4194303.5) - 1.0
 
             val body = sin(2.0 * PI * bodyHz * t)
-            val upper = 0.42 * sin(2.0 * PI * upperHz * t + 0.35)
-            val transient = if (i < 80) noise * (1.0 - i / 80.0) * 0.34 else 0.0
-            val impulse = if (i < 5) (1.0 - i / 5.0) * 0.52 else 0.0
+            val upper = 0.38 * sin(2.0 * PI * upperHz * t + 0.35)
+            val transient = if (i < 68) noise * (1.0 - i / 68.0) * 0.28 else 0.0
+            val impulse = if (i < 5) (1.0 - i / 5.0) * 0.50 else 0.0
             val sample = (body + upper + transient + impulse) * envelope * attack * amplitude
             out[i] = (sample.coerceIn(-1.0, 1.0) * Short.MAX_VALUE).roundToInt().toShort()
         }

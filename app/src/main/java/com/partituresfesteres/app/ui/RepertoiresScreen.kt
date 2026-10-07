@@ -3,6 +3,7 @@ package com.partituresfesteres.app.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -106,100 +107,45 @@ fun RepertoiresScreen(
     var renameTarget by remember { mutableStateOf<Repertoire?>(null) }
     var deleteTarget by remember { mutableStateOf<Repertoire?>(null) }
 
-    Row(Modifier.fillMaxSize()) {
-        RepertoireSidebar(
-            onLibraryClick = onLibraryClick,
-            onRecentsClick = onRecentsClick,
-            onFavoritesClick = onFavoritesClick,
-            onToolsClick = onToolsClick,
-            onAddContentClick = onAddContentClick,
-        )
-
+    AdaptiveNavigationScaffold(
+        activeSection = AppSection.REPERTOIRES,
+        onLibraryClick = onLibraryClick,
+        onRepertoiresClick = {},
+        onRecentsClick = onRecentsClick,
+        onFavoritesClick = onFavoritesClick,
+        onToolsClick = onToolsClick,
+        onAddContentClick = onAddContentClick,
+    ) {
+        val compact = LocalAdaptiveWindowSize.current == AdaptiveWindowSize.COMPACT
         Column(
             modifier = Modifier
-                .weight(1f)
-                .fillMaxHeight()
-                .padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 18.dp),
+                .fillMaxSize()
+                .padding(
+                    start = if (compact) 10.dp else 20.dp,
+                    end = if (compact) 10.dp else 20.dp,
+                    top = if (compact) 6.dp else 12.dp,
+                    bottom = if (compact) 6.dp else 18.dp,
+                ),
         ) {
-            RepertoireHeader()
-            Spacer(Modifier.height(10.dp))
+            RepertoireHeader(compact)
+            Spacer(Modifier.height(if (compact) 6.dp else 10.dp))
 
-            Row(
-                modifier = Modifier.fillMaxSize(),
-                horizontalArrangement = Arrangement.spacedBy(14.dp),
-            ) {
+            if (compact) {
+                CompactRepertoireSelector(
+                    repertoires = repertoires,
+                    selected = selected,
+                    onSelect = onSelectRepertoire,
+                    onCreate = { showCreateDialog = true },
+                )
+                Spacer(Modifier.height(7.dp))
                 FestivePanel(
-                    modifier = Modifier.weight(0.34f).fillMaxHeight(),
-                    cornerRadius = 20.dp,
-                    backgroundColor = ParchmentCard,
-                ) {
-                    Column(Modifier.fillMaxSize().padding(14.dp)) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(
-                                stringResource(R.string.repertoire_title),
-                                fontSize = 22.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = Burgundy,
-                                modifier = Modifier.weight(1f),
-                            )
-                            IconButton(onClick = { showCreateDialog = true }) {
-                                Icon(Icons.Default.Add, contentDescription = stringResource(R.string.create_repertoire), tint = Burgundy)
-                            }
-                        }
-                        Spacer(Modifier.height(4.dp))
-
-                        if (repertoires.isEmpty()) {
-                            Column(
-                                modifier = Modifier.fillMaxSize().padding(16.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center,
-                            ) {
-                                Icon(Icons.Default.LibraryMusic, contentDescription = null, tint = Burgundy, modifier = Modifier.size(46.dp))
-                                Spacer(Modifier.height(10.dp))
-                                Text(stringResource(R.string.no_repertoires), color = Ink, fontSize = 17.sp, fontWeight = FontWeight.SemiBold)
-                                Spacer(Modifier.height(6.dp))
-                                Text(
-                                    stringResource(R.string.no_repertoires_hint),
-                                    color = MutedInk,
-                                    fontSize = 13.sp,
-                                )
-                                Spacer(Modifier.height(14.dp))
-                                Button(
-                                    onClick = { showCreateDialog = true },
-                                    colors = ButtonDefaults.buttonColors(backgroundColor = Burgundy, contentColor = Color.White),
-                                ) {
-                                    Icon(Icons.Default.Add, contentDescription = null)
-                                    Spacer(Modifier.width(8.dp))
-                                    Text(stringResource(R.string.new_repertoire))
-                                }
-                            }
-                        } else {
-                            LazyColumn(
-                                verticalArrangement = Arrangement.spacedBy(9.dp),
-                                contentPadding = PaddingValues(bottom = 12.dp),
-                            ) {
-                                items(repertoires, key = { it.id }) { repertoire ->
-                                    RepertoireCard(
-                                        repertoire = repertoire,
-                                        selected = repertoire.id == selected?.id,
-                                        onClick = { onSelectRepertoire(repertoire.id) },
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-
-                FestivePanel(
-                    modifier = Modifier.weight(0.66f).fillMaxHeight(),
-                    cornerRadius = 20.dp,
+                    modifier = Modifier.fillMaxWidth().weight(1f),
+                    cornerRadius = 18.dp,
                     backgroundColor = ParchmentCard,
                 ) {
                     if (selected == null) {
                         EmptyRepertoireDetail(onCreate = { showCreateDialog = true })
                     } else {
-                        // Fuerza una composición limpia si cambia el contenido del repertorio.
-                        // Evita estados visuales transitorios tras añadir/quitar/reordenar obras.
                         key(selected.id, selected.entries.hashCode()) {
                             RepertoireDetail(
                                 repertoire = selected,
@@ -213,6 +159,94 @@ fun RepertoiresScreen(
                                 onStart = { onStartPerformance(selected, 0) },
                                 onOpenEntry = { index -> onStartPerformance(selected, index) },
                             )
+                        }
+                    }
+                }
+            } else {
+                Row(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalArrangement = Arrangement.spacedBy(14.dp),
+                ) {
+                    FestivePanel(
+                        modifier = Modifier.weight(0.34f).fillMaxHeight(),
+                        cornerRadius = 20.dp,
+                        backgroundColor = ParchmentCard,
+                    ) {
+                        Column(Modifier.fillMaxSize().padding(14.dp)) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(
+                                    stringResource(R.string.repertoire_title),
+                                    fontSize = 22.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = Burgundy,
+                                    modifier = Modifier.weight(1f),
+                                )
+                                IconButton(onClick = { showCreateDialog = true }) {
+                                    Icon(Icons.Default.Add, contentDescription = stringResource(R.string.create_repertoire), tint = Burgundy)
+                                }
+                            }
+                            Spacer(Modifier.height(4.dp))
+
+                            if (repertoires.isEmpty()) {
+                                Column(
+                                    modifier = Modifier.fillMaxSize().padding(16.dp),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.Center,
+                                ) {
+                                    Icon(Icons.Default.LibraryMusic, contentDescription = null, tint = Burgundy, modifier = Modifier.size(46.dp))
+                                    Spacer(Modifier.height(10.dp))
+                                    Text(stringResource(R.string.no_repertoires), color = Ink, fontSize = 17.sp, fontWeight = FontWeight.SemiBold)
+                                    Spacer(Modifier.height(6.dp))
+                                    Text(stringResource(R.string.no_repertoires_hint), color = MutedInk, fontSize = 13.sp)
+                                    Spacer(Modifier.height(14.dp))
+                                    Button(
+                                        onClick = { showCreateDialog = true },
+                                        colors = ButtonDefaults.buttonColors(backgroundColor = Burgundy, contentColor = Color.White),
+                                    ) {
+                                        Icon(Icons.Default.Add, contentDescription = null)
+                                        Spacer(Modifier.width(8.dp))
+                                        Text(stringResource(R.string.new_repertoire))
+                                    }
+                                }
+                            } else {
+                                LazyColumn(
+                                    verticalArrangement = Arrangement.spacedBy(9.dp),
+                                    contentPadding = PaddingValues(bottom = 12.dp),
+                                ) {
+                                    items(repertoires, key = { it.id }) { repertoire ->
+                                        RepertoireCard(
+                                            repertoire = repertoire,
+                                            selected = repertoire.id == selected?.id,
+                                            onClick = { onSelectRepertoire(repertoire.id) },
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    FestivePanel(
+                        modifier = Modifier.weight(0.66f).fillMaxHeight(),
+                        cornerRadius = 20.dp,
+                        backgroundColor = ParchmentCard,
+                    ) {
+                        if (selected == null) {
+                            EmptyRepertoireDetail(onCreate = { showCreateDialog = true })
+                        } else {
+                            key(selected.id, selected.entries.hashCode()) {
+                                RepertoireDetail(
+                                    repertoire = selected,
+                                    availableUris = if (indexingLibrary) null else globalPdfs.map { it.uri.toString() }.toSet(),
+                                    onAdd = { showAddDialog = true },
+                                    onDelete = { deleteTarget = selected },
+                                    onDuplicate = { onDuplicateRepertoire(selected.id) },
+                                    onRename = { renameTarget = selected },
+                                    onRemoveEntry = { index -> onRemoveEntry(selected.id, index) },
+                                    onMoveEntry = { from, to -> onMoveEntry(selected.id, from, to) },
+                                    onStart = { onStartPerformance(selected, 0) },
+                                    onOpenEntry = { index -> onStartPerformance(selected, index) },
+                                )
+                            }
                         }
                     }
                 }
@@ -278,11 +312,63 @@ fun RepertoiresScreen(
 }
 
 @Composable
-private fun RepertoireHeader() {
+private fun RepertoireHeader(compact: Boolean = false) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        CimoPlaceholder()
-        Spacer(Modifier.width(12.dp))
-        Text(stringResource(R.string.partitures_festeres), fontSize = 32.sp, color = Burgundy, fontWeight = FontWeight.SemiBold)
+        CimoPlaceholder(size = if (compact) 40.dp else 64.dp)
+        Spacer(Modifier.width(if (compact) 7.dp else 12.dp))
+        Text(
+            stringResource(R.string.partitures_festeres),
+            fontSize = if (compact) 24.sp else 32.sp,
+            color = Burgundy,
+            fontWeight = FontWeight.SemiBold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+    }
+}
+
+@Composable
+private fun CompactRepertoireSelector(
+    repertoires: List<Repertoire>,
+    selected: Repertoire?,
+    onSelect: (String) -> Unit,
+    onCreate: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .horizontalScroll(androidx.compose.foundation.rememberScrollState()),
+        horizontalArrangement = Arrangement.spacedBy(7.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        FestiveButton(
+            onClick = onCreate,
+            backgroundColor = Burgundy,
+            contentColor = Color.White,
+            horizontalPadding = 12.dp,
+            verticalPadding = 8.dp,
+        ) {
+            Icon(Icons.Default.Add, contentDescription = stringResource(R.string.create_repertoire), tint = Color.White, modifier = Modifier.size(18.dp))
+            Spacer(Modifier.width(4.dp))
+            Text(stringResource(R.string.new_repertoire), color = Color.White, fontSize = 12.sp)
+        }
+        repertoires.forEach { repertoire ->
+            FestiveChoice(
+                selected = repertoire.id == selected?.id,
+                onClick = { onSelect(repertoire.id) },
+                selectedColor = Navy,
+                contentColor = Navy,
+                cornerRadius = 12.dp,
+            ) {
+                Text(
+                    repertoire.name,
+                    color = if (repertoire.id == selected?.id) Color.White else Navy,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    maxLines = 1,
+                )
+            }
+        }
     }
 }
 
@@ -457,14 +543,15 @@ private fun RepertoireDetail(
         listOf(entry.displayName, entry.fileName, entry.relativePath)
     }
 
-    Column(Modifier.fillMaxSize().padding(16.dp)) {
-        // Títol en una línia pròpia: evita que es trenque en pantalles de 1280 px.
+    val compact = LocalAdaptiveWindowSize.current == AdaptiveWindowSize.COMPACT
+    Column(Modifier.fillMaxSize().padding(if (compact) 9.dp else 16.dp)) {
+        // Títol en una línia pròpia: evita que es trenque en pantalles estretes.
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f)) {
                 Text(
                     repertoire.name,
                     color = Burgundy,
-                    fontSize = 24.sp,
+                    fontSize = if (compact) 19.sp else 24.sp,
                     fontWeight = FontWeight.SemiBold,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -485,7 +572,9 @@ private fun RepertoireDetail(
 
         Spacer(Modifier.height(8.dp))
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .then(if (compact) Modifier.horizontalScroll(androidx.compose.foundation.rememberScrollState()) else Modifier),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -507,45 +596,60 @@ private fun RepertoireDetail(
         }
 
         Spacer(Modifier.height(6.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            OutlinedTextField(
-                value = search,
-                onValueChange = { search = it },
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-                trailingIcon = if (search.isNotBlank()) {
-                    {
-                        IconButton(onClick = { search = "" }) {
-                            Icon(Icons.Default.Close, contentDescription = stringResource(R.string.search_clear))
-                        }
-                    }
-                } else null,
-                placeholder = { Text(stringResource(R.string.search_repertoire)) },
-                singleLine = true,
-                modifier = Modifier.weight(1f),
-                colors = festiveTextFieldColors(),
-            )
-            Button(
-                onClick = onAdd,
-                modifier = Modifier
-                    .widthIn(min = 158.dp, max = 180.dp)
-                    .heightIn(min = 56.dp),
-                colors = ButtonDefaults.buttonColors(backgroundColor = Burgundy, contentColor = Color.White),
-                shape = RoundedCornerShape(12.dp),
-                elevation = ButtonDefaults.elevation(defaultElevation = 1.dp),
-                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 8.dp),
+        if (compact) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(18.dp))
-                Spacer(Modifier.width(6.dp))
-                Text(
-                    stringResource(R.string.add_scores),
-                    fontSize = 13.sp,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
+                OutlinedTextField(
+                    value = search,
+                    onValueChange = { search = it },
+                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                    trailingIcon = if (search.isNotBlank()) {{ IconButton(onClick = { search = "" }) { Icon(Icons.Default.Close, contentDescription = stringResource(R.string.search_clear)) } }} else null,
+                    placeholder = { Text(stringResource(R.string.search_repertoire), fontSize = 12.sp) },
+                    singleLine = true,
+                    modifier = Modifier.weight(1f),
+                    colors = festiveTextFieldColors(),
                 )
+                Button(
+                    onClick = onAdd,
+                    modifier = Modifier.heightIn(min = 48.dp),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Burgundy, contentColor = Color.White),
+                    shape = RoundedCornerShape(12.dp),
+                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 8.dp),
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = stringResource(R.string.add_scores), modifier = Modifier.size(20.dp))
+                }
+            }
+        } else {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                OutlinedTextField(
+                    value = search,
+                    onValueChange = { search = it },
+                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                    trailingIcon = if (search.isNotBlank()) {{ IconButton(onClick = { search = "" }) { Icon(Icons.Default.Close, contentDescription = stringResource(R.string.search_clear)) } }} else null,
+                    placeholder = { Text(stringResource(R.string.search_repertoire)) },
+                    singleLine = true,
+                    modifier = Modifier.weight(1f),
+                    colors = festiveTextFieldColors(),
+                )
+                Button(
+                    onClick = onAdd,
+                    modifier = Modifier.widthIn(min = 158.dp, max = 180.dp).heightIn(min = 56.dp),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Burgundy, contentColor = Color.White),
+                    shape = RoundedCornerShape(12.dp),
+                    elevation = ButtonDefaults.elevation(defaultElevation = 1.dp),
+                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 8.dp),
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(Modifier.width(6.dp))
+                    Text(stringResource(R.string.add_scores), fontSize = 13.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                }
             }
         }
         Spacer(Modifier.height(8.dp))

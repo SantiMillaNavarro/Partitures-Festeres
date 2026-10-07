@@ -14,6 +14,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -63,7 +65,8 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.key
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -76,6 +79,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -93,7 +97,6 @@ import com.partituresfesteres.app.data.AppSettings
 import com.partituresfesteres.app.data.BackupManager
 import com.partituresfesteres.app.data.PdfThumbnailRepository
 import com.partituresfesteres.app.data.PdfPageAdjustmentStore
-import com.partituresfesteres.app.data.PdfViewerRepository
 import com.partituresfesteres.app.data.RootFolderStore
 import com.partituresfesteres.app.data.RepertoireStore
 import com.partituresfesteres.app.data.ViewerStateStore
@@ -112,7 +115,9 @@ import com.partituresfesteres.app.ui.theme.MutedGold
 import com.partituresfesteres.app.ui.theme.MutedInk
 import com.partituresfesteres.app.ui.theme.Navy
 import com.partituresfesteres.app.ui.theme.ParchmentCard
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.coroutineScope
 import java.util.UUID
 
 internal enum class AppSection { LIBRARY, REPERTOIRES, RECENTS, FAVORITES, TOOLS, ADD_CONTENT, SETTINGS }
@@ -131,12 +136,12 @@ private data class ViewerSession(
 fun PartituresFesteresApp(
     incomingPdfUri: Uri? = null,
     onIncomingPdfConsumed: () -> Unit = {},
+    refreshToken: Int = 0,
 ) {
     val context = LocalContext.current
     val store = remember { RootFolderStore(context) }
     val repository = remember { LibraryRepository(context) }
     val thumbnailRepository = remember { PdfThumbnailRepository(context) }
-    val viewerRepository = remember { PdfViewerRepository(context) }
     val viewerStateStore = remember { ViewerStateStore(context) }
     val repertoireStore = remember { RepertoireStore(context) }
     val libraryStateStore = remember { LibraryStateStore(context) }
@@ -145,7 +150,19 @@ fun PartituresFesteresApp(
     val settingsStore = remember { SettingsStore(context) }
     val backupManager = remember { BackupManager(context) }
 
-    var viewerSession by remember { mutableStateOf<ViewerSession?>(null) }
+    fun launchViewer(session: ViewerSession) {
+        if (session.pdfs.isEmpty()) return
+        context.startActivity(
+            PdfViewerActivity.createIntent(
+                context = context,
+                pdfs = session.pdfs,
+                index = session.index,
+                startMode = session.startMode,
+                loopForward = session.loopForward,
+            )
+        )
+    }
+
     var activeSection by remember { mutableStateOf(AppSection.LIBRARY) }
     var repertoires by remember { mutableStateOf(repertoireStore.load()) }
     var selectedRepertoireId by remember { mutableStateOf(repertoires.firstOrNull()?.id) }
@@ -162,7 +179,24 @@ fun PartituresFesteresApp(
     var search by remember { mutableStateOf("") }
     var appSettings by remember { mutableStateOf(settingsStore.load()) }
     var backupMessage by remember { mutableStateOf<String?>(null) }
+    var showEasterEgg by remember { mutableStateOf(false) }
+    var easterEggTransition by remember { mutableStateOf(false) }
+    val transitionOverlayAlpha by animateFloatAsState(
+        targetValue = if (easterEggTransition) 0.52f else 0f,
+        animationSpec = tween(durationMillis = 320),
+        label = "easterEggTransition",
+    )
     val scope = rememberCoroutineScope()
+
+    fun openEasterEgg() {
+        if (showEasterEgg || easterEggTransition) return
+        easterEggTransition = true
+        scope.launch {
+            delay(360)
+            showEasterEgg = true
+            easterEggTransition = false
+        }
+    }
 
     LaunchedEffect(incomingPdfUri, rootUri) {
         if (incomingPdfUri != null && rootUri != null) {
@@ -471,79 +505,30 @@ fun PartituresFesteresApp(
         rootUri?.let { rebuildGlobalIndex(it) }
     }
 
-    BackHandler(enabled = viewerSession == null && activeSection != AppSection.LIBRARY) {
+    // Quan tornem de PdfViewerActivity, refresquem l'estat compartit que el
+    // visor pot haver modificat (favorits, recents i referència de l'afinador).
+    LaunchedEffect(refreshToken) {
+        if (refreshToken > 0) {
+            favorites = libraryStateStore.loadFavorites()
+            recents = libraryStateStore.loadRecents()
+            appSettings = settingsStore.load()
+        }
+    }
+
+    BackHandler(enabled = activeSection != AppSection.LIBRARY) {
         activeSection = AppSection.LIBRARY
         returnToLibraryRoot()
     }
 
-    BackHandler(enabled = viewerSession == null && activeSection == AppSection.LIBRARY && breadcrumbs.isNotEmpty()) {
+    BackHandler(enabled = activeSection == AppSection.LIBRARY && breadcrumbs.isNotEmpty()) {
         navigateBack()
     }
 
-    val activeViewer = viewerSession
-    LaunchedEffect(activeViewer?.currentPdf?.uri) {
-        activeViewer?.currentPdf?.let(::recordRecent)
-    }
-    if (activeViewer != null) {
-        key(activeViewer.currentPdf.uri, activeViewer.revision) {
-            PdfViewerScreen(
-                pdf = activeViewer.currentPdf,
-                repository = viewerRepository,
-                stateStore = viewerStateStore,
-                annotationStore = annotationStore,
-                pageAdjustmentStore = pageAdjustmentStore,
-                settings = appSettings,
-                tunerReferenceHz = appSettings.tunerReferenceHz,
-                onTunerReferenceChange = { hz ->
-                    val updated = appSettings.copy(tunerReferenceHz = hz.coerceIn(430, 450))
-                    appSettings = updated
-                    settingsStore.save(updated)
-                },
-                startMode = activeViewer.startMode,
-                scorePosition = activeViewer.index + 1,
-                totalScores = activeViewer.pdfs.size,
-                scoreList = activeViewer.pdfs,
-                onSelectScore = { targetIndex ->
-                    if (targetIndex in activeViewer.pdfs.indices) {
-                        viewerSession = activeViewer.copy(
-                            index = targetIndex,
-                            startMode = ViewerStartMode.FIRST,
-                        )
-                    }
-                },
-                isFavorite = favorites.any { it.uri == activeViewer.currentPdf.uri },
-                onToggleFavorite = { toggleFavorite(activeViewer.currentPdf) },
-                onClose = { viewerSession = null },
-                onPreviousScore = {
-                    if (activeViewer.index > 0) {
-                        viewerSession = activeViewer.copy(
-                            index = activeViewer.index - 1,
-                            startMode = ViewerStartMode.LAST,
-                        )
-                    }
-                },
-                onNextScore = {
-                    when {
-                        activeViewer.index < activeViewer.pdfs.lastIndex -> {
-                            viewerSession = activeViewer.copy(
-                                index = activeViewer.index + 1,
-                                startMode = ViewerStartMode.FIRST,
-                            )
-                        }
-                        activeViewer.loopForward && activeViewer.pdfs.isNotEmpty() -> {
-                            viewerSession = activeViewer.copy(
-                                index = 0,
-                                startMode = ViewerStartMode.FIRST,
-                                revision = activeViewer.revision + 1,
-                            )
-                        }
-                    }
-                },
-            )
-        }
-    } else {
+    Box(Modifier.fillMaxSize()) {
         AppBackground {
-            if (rootUri == null) {
+            if (showEasterEgg) {
+                EasterEggGameScreen(onExit = { showEasterEgg = false })
+            } else if (rootUri == null) {
                 FirstRunScreen(onSelectRoot = { folderPicker.launch(null) })
             } else {
                 when (activeSection) {
@@ -604,10 +589,12 @@ fun PartituresFesteresApp(
                             onOpenPdf = { pdf ->
                                 val sourcePdfs = if (isGlobalSearch) filteredPdfs else localPdfs
                                 val index = sourcePdfs.indexOfFirst { it.uri == pdf.uri }.coerceAtLeast(0)
-                                viewerSession = ViewerSession(
-                                    pdfs = sourcePdfs,
-                                    index = index,
-                                    startMode = ViewerStartMode.RESUME,
+                                launchViewer(
+                                    ViewerSession(
+                                        pdfs = sourcePdfs,
+                                        index = index,
+                                        startMode = ViewerStartMode.RESUME,
+                                    )
                                 )
                             },
                             onBack = ::navigateBack,
@@ -631,6 +618,7 @@ fun PartituresFesteresApp(
                                 currentUri?.let { uri -> scope.launch { reload(uri) } }
                                 rootUri?.let { uri -> scope.launch { rebuildGlobalIndex(uri) } }
                             },
+                            onOpenEasterEgg = ::openEasterEgg,
                         )
                     }
                     AppSection.REPERTOIRES -> {
@@ -655,11 +643,13 @@ fun PartituresFesteresApp(
                                 if (ordered.isNotEmpty()) {
                                     val requestedPosition = ordered.indexOfFirst { (originalIndex, _) -> originalIndex >= startIndex }
                                         .let { if (it >= 0) it else 0 }
-                                    viewerSession = ViewerSession(
-                                        pdfs = ordered.map { it.second },
-                                        index = requestedPosition.coerceIn(0, ordered.lastIndex),
-                                        startMode = ViewerStartMode.FIRST,
-                                        loopForward = true,
+                                    launchViewer(
+                                        ViewerSession(
+                                            pdfs = ordered.map { it.second },
+                                            index = requestedPosition.coerceIn(0, ordered.lastIndex),
+                                            startMode = ViewerStartMode.FIRST,
+                                            loopForward = true,
+                                        )
                                     )
                                 }
                             },
@@ -684,7 +674,7 @@ fun PartituresFesteresApp(
                             onToggleFavorite = ::toggleFavorite,
                             onOpenPdf = { pdf ->
                                 val index = recents.indexOfFirst { it.uri == pdf.uri }.coerceAtLeast(0)
-                                viewerSession = ViewerSession(recents, index, ViewerStartMode.RESUME)
+                                launchViewer(ViewerSession(recents, index, ViewerStartMode.RESUME))
                             },
                             onLibraryClick = {
                                 activeSection = AppSection.LIBRARY
@@ -695,6 +685,7 @@ fun PartituresFesteresApp(
                             onFavoritesClick = { activeSection = AppSection.FAVORITES },
                             onToolsClick = { activeSection = AppSection.TOOLS },
                             onAddContentClick = { activeSection = AppSection.ADD_CONTENT },
+                            onOpenEasterEgg = ::openEasterEgg,
                         )
                     }
                     AppSection.FAVORITES -> {
@@ -708,7 +699,7 @@ fun PartituresFesteresApp(
                             onToggleFavorite = ::toggleFavorite,
                             onOpenPdf = { pdf ->
                                 val index = favorites.indexOfFirst { it.uri == pdf.uri }.coerceAtLeast(0)
-                                viewerSession = ViewerSession(favorites, index, ViewerStartMode.RESUME)
+                                launchViewer(ViewerSession(favorites, index, ViewerStartMode.RESUME))
                             },
                             onLibraryClick = {
                                 activeSection = AppSection.LIBRARY
@@ -719,6 +710,7 @@ fun PartituresFesteresApp(
                             onFavoritesClick = { activeSection = AppSection.FAVORITES },
                             onToolsClick = { activeSection = AppSection.TOOLS },
                             onAddContentClick = { activeSection = AppSection.ADD_CONTENT },
+                            onOpenEasterEgg = ::openEasterEgg,
                         )
                     }
                     AppSection.SETTINGS -> {
@@ -767,6 +759,7 @@ fun PartituresFesteresApp(
                             onFavoritesClick = { activeSection = AppSection.FAVORITES },
                             onToolsClick = { activeSection = AppSection.TOOLS },
                             onAddContentClick = { activeSection = AppSection.ADD_CONTENT },
+                            onOpenEasterEgg = ::openEasterEgg,
                         )
                     }
                     AppSection.ADD_CONTENT -> {
@@ -799,6 +792,14 @@ fun PartituresFesteresApp(
                 }
             }
         }
+
+        if (transitionOverlayAlpha > 0.001f) {
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .background(Color.White.copy(alpha = transitionOverlayAlpha))
+            )
+        }
     }
 }
 
@@ -818,40 +819,37 @@ private fun AppBackground(content: @Composable () -> Unit) {
 
 @Composable
 private fun FirstRunScreen(onSelectRoot: () -> Unit) {
+    val compact = LocalAdaptiveWindowSize.current == AdaptiveWindowSize.COMPACT
     Column(
-        modifier = Modifier.fillMaxSize().padding(52.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(if (compact) 18.dp else 52.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        CimoPlaceholder()
-        Spacer(Modifier.height(8.dp))
-        AppTitle()
-        Spacer(Modifier.height(22.dp))
-        FestivePanel(
-            cornerRadius = 22.dp,
-            backgroundColor = ParchmentCard,
-        ) {
+        CimoPlaceholder(size = if (compact) 48.dp else 64.dp)
+        Spacer(Modifier.height(if (compact) 5.dp else 8.dp))
+        AppTitle(fontSize = if (compact) 27.sp else 34.sp)
+        Spacer(Modifier.height(if (compact) 12.dp else 22.dp))
+        FestivePanel(cornerRadius = 22.dp, backgroundColor = ParchmentCard) {
             Column(
-                modifier = Modifier.padding(horizontal = 44.dp, vertical = 30.dp),
+                modifier = Modifier.padding(horizontal = if (compact) 20.dp else 44.dp, vertical = if (compact) 18.dp else 30.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(stringResource(R.string.welcome_title), fontSize = 24.sp, fontWeight = FontWeight.SemiBold)
-                Spacer(Modifier.height(10.dp))
-                Text(
-                    stringResource(R.string.welcome_body),
-                    color = MutedInk,
-                    fontSize = 17.sp,
-                )
-                Spacer(Modifier.height(24.dp))
+                Text(stringResource(R.string.welcome_title), fontSize = if (compact) 20.sp else 24.sp, fontWeight = FontWeight.SemiBold)
+                Spacer(Modifier.height(8.dp))
+                Text(stringResource(R.string.welcome_body), color = MutedInk, fontSize = if (compact) 14.sp else 17.sp)
+                Spacer(Modifier.height(if (compact) 16.dp else 24.dp))
                 Button(
                     onClick = onSelectRoot,
                     colors = ButtonDefaults.buttonColors(backgroundColor = Burgundy, contentColor = Color.White),
                     shape = RoundedCornerShape(14.dp),
-                    contentPadding = PaddingValues(horizontal = 28.dp, vertical = 14.dp),
+                    contentPadding = PaddingValues(horizontal = if (compact) 18.dp else 28.dp, vertical = if (compact) 10.dp else 14.dp),
                 ) {
                     Icon(Icons.Default.Folder, contentDescription = null)
-                    Spacer(Modifier.width(10.dp))
-                    Text(stringResource(R.string.settings_select_root), fontSize = 17.sp)
+                    Spacer(Modifier.width(8.dp))
+                    Text(stringResource(R.string.settings_select_root), fontSize = if (compact) 14.sp else 17.sp)
                 }
             }
         }
@@ -891,6 +889,7 @@ private fun LibraryShell(
     repertoireUseCount: (LibraryPdf) -> Int,
     onPdfReplaced: (LibraryPdf, LibraryPdf) -> Unit,
     onPdfDeleted: (LibraryPdf) -> Unit,
+    onOpenEasterEgg: () -> Unit,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     var managedPdf by remember { mutableStateOf<LibraryPdf?>(null) }
@@ -914,36 +913,67 @@ private fun LibraryShell(
         )
     }
 
-    Row(Modifier.fillMaxSize()) {
-        Sidebar(
-            activeSection = AppSection.LIBRARY,
-            onLibraryClick = onLibraryRoot,
-            onRepertoiresClick = onOpenRepertoires,
-            onRecentsClick = onOpenRecents,
-            onFavoritesClick = onOpenFavorites,
-            onAddContentClick = onAddContent,
-            onToolsClick = onOpenTools,
-        )
+    Box(Modifier.fillMaxSize()) {
+        AdaptiveNavigationScaffold(
+        activeSection = AppSection.LIBRARY,
+        onLibraryClick = onLibraryRoot,
+        onRepertoiresClick = onOpenRepertoires,
+        onRecentsClick = onOpenRecents,
+        onFavoritesClick = onOpenFavorites,
+        onToolsClick = onOpenTools,
+        onAddContentClick = onAddContent,
+    ) {
+        val compact = LocalAdaptiveWindowSize.current == AdaptiveWindowSize.COMPACT
         Column(
             modifier = Modifier
-                .weight(1f)
-                .fillMaxHeight()
-                .padding(start = 26.dp, end = 38.dp, top = 18.dp, bottom = 24.dp),
+                .fillMaxSize()
+                .padding(
+                    start = if (compact) 12.dp else 26.dp,
+                    end = if (compact) 12.dp else 38.dp,
+                    top = if (compact) 8.dp else 18.dp,
+                    bottom = if (compact) 8.dp else 24.dp,
+                ),
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    CimoPlaceholder()
-                    AppTitle()
+                if (compact) {
+                    // En mòbil el rosetó decoratiu pot quedar fora de la composició.
+                    // La capçalera completa actua com a segon accés secret: 3 segons.
+                    Row(
+                        modifier = Modifier.pointerInput(Unit) {
+                            detectTapGestures(
+                                onPress = {
+                                    coroutineScope {
+                                        val trigger = launch {
+                                            delay(3_000)
+                                            onOpenEasterEgg()
+                                        }
+                                        tryAwaitRelease()
+                                        trigger.cancel()
+                                    }
+                                }
+                            )
+                        },
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        CimoPlaceholder(size = 42.dp)
+                        Spacer(Modifier.width(8.dp))
+                        AppTitle(fontSize = 25.sp)
+                    }
+                } else {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        CimoPlaceholder()
+                        AppTitle()
+                    }
                 }
                 Spacer(Modifier.weight(1f))
                 IconButton(onClick = onOpenSettings) {
-                    Icon(Icons.Default.Settings, contentDescription = stringResource(R.string.settings_title), tint = Ink, modifier = Modifier.size(30.dp))
+                    Icon(Icons.Default.Settings, contentDescription = stringResource(R.string.settings_title), tint = Ink, modifier = Modifier.size(if (compact) 26.dp else 30.dp))
                 }
             }
 
-            Spacer(Modifier.height(10.dp))
+            Spacer(Modifier.height(if (compact) 5.dp else 10.dp))
             BreadcrumbRow(breadcrumbs = breadcrumbs, onBack = onBack)
-            Spacer(Modifier.height(10.dp))
+            Spacer(Modifier.height(if (compact) 5.dp else 10.dp))
 
             Row(verticalAlignment = Alignment.CenterVertically) {
                 OutlinedTextField(
@@ -976,7 +1006,7 @@ private fun LibraryShell(
                 }
             }
 
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(if (compact) 8.dp else 16.dp))
 
             when {
                 loading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -996,6 +1026,32 @@ private fun LibraryShell(
                     onManagePdf = { managedPdf = it },
                 )
             }
+        }
+        }
+
+        // Easter egg: zona invisible centrada sobre el rosetó inferior dret.
+        // En mode compacte s'evita tapar el botó flotant d'afegir contingut.
+        if (LocalAdaptiveWindowSize.current != AdaptiveWindowSize.COMPACT) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(end = 6.dp, bottom = 4.dp)
+                    .size(92.dp)
+                    .pointerInput(Unit) {
+                        detectTapGestures(
+                            onPress = {
+                                coroutineScope {
+                                    val trigger = launch {
+                                        delay(3_000)
+                                        onOpenEasterEgg()
+                                    }
+                                    tryAwaitRelease()
+                                    trigger.cancel()
+                                }
+                            }
+                        )
+                    }
+            )
         }
     }
 }
@@ -1305,20 +1361,29 @@ private fun PdfFileActionsDialog(
 
 @Composable
 private fun BreadcrumbRow(breadcrumbs: List<LibraryCrumb>, onBack: () -> Unit) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
+    val compact = LocalAdaptiveWindowSize.current == AdaptiveWindowSize.COMPACT
+    Row(
+        modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
         if (breadcrumbs.isNotEmpty()) {
-            IconButton(onClick = onBack, modifier = Modifier.size(38.dp)) {
+            IconButton(onClick = onBack, modifier = Modifier.size(if (compact) 34.dp else 38.dp)) {
                 Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.back), tint = Burgundy)
             }
             Spacer(Modifier.width(2.dp))
         }
-        Text(stringResource(R.string.sidebar_library), fontSize = 26.sp, color = Burgundy, fontWeight = FontWeight.SemiBold)
+        Text(
+            stringResource(R.string.sidebar_library),
+            fontSize = if (compact) 20.sp else 26.sp,
+            color = Burgundy,
+            fontWeight = FontWeight.SemiBold,
+        )
         breadcrumbs.forEach { crumb ->
-            Text("  ›  ", color = AgedGold, fontSize = 22.sp)
+            Text("  ›  ", color = AgedGold, fontSize = if (compact) 17.sp else 22.sp)
             Text(
                 crumb.name,
                 color = Navy,
-                fontSize = 20.sp,
+                fontSize = if (compact) 16.sp else 20.sp,
                 fontWeight = FontWeight.Medium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -1337,54 +1402,94 @@ internal fun Sidebar(
     onAddContentClick: () -> Unit,
     onToolsClick: () -> Unit = {},
 ) {
-    // Use the real layout constraints instead of LocalConfiguration.screenWidthDp.
-    // A locale-specific Configuration can be created before the Activity has its final
-    // landscape window metrics, which made the navigation bar incorrectly switch to
-    // compact mode after restarting the app following a language change.
-    BoxWithConstraints(modifier = Modifier.fillMaxHeight()) {
-        val compact = maxWidth < 700.dp
-        val sidebarWidth = if (compact) 92.dp else 236.dp
+    val windowSize = LocalAdaptiveWindowSize.current
+    val mediumRail = windowSize == AdaptiveWindowSize.MEDIUM
+    val sidebarWidth = if (mediumRail) 198.dp else 236.dp
 
+    if (mediumRail) {
+        // Medium tablets (for example Nokia T10) still have enough horizontal
+        // room for readable labels. Keep the rail compact, but never reduce it
+        // to icon-only navigation; the entire column can scroll if height is
+        // constrained.
         Column(
             modifier = Modifier
                 .width(sidebarWidth)
                 .fillMaxHeight()
                 .background(Color(0xAAF7ECD8))
                 .border(1.dp, AgedGold.copy(alpha = 0.45f))
-                .padding(horizontal = if (compact) 9.dp else 18.dp, vertical = if (compact) 18.dp else 30.dp),
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 8.dp, vertical = 12.dp),
         ) {
-            if (!compact) {
-                Text(stringResource(R.string.sidebar_good_morning), fontStyle = FontStyle.Italic, fontSize = 19.sp, color = Ink)
-                Text(stringResource(R.string.sidebar_motto), fontStyle = FontStyle.Italic, fontSize = 13.sp, color = MutedInk)
-                Spacer(Modifier.height(34.dp))
-            } else {
-                Spacer(Modifier.height(8.dp))
-            }
+            SidebarItem(stringResource(R.string.sidebar_library), Icons.Default.Folder, Burgundy, activeSection == AppSection.LIBRARY, medium = true, onClick = onLibraryClick)
+            SidebarItem(stringResource(R.string.sidebar_repertoires), Icons.Default.LibraryMusic, Navy, activeSection == AppSection.REPERTOIRES, medium = true, onClick = onRepertoiresClick)
+            SidebarItem(stringResource(R.string.sidebar_recents), Icons.Default.History, HeritageGreen, activeSection == AppSection.RECENTS, medium = true, onClick = onRecentsClick)
+            SidebarItem(stringResource(R.string.sidebar_favorites), Icons.Default.Favorite, MutedGold, activeSection == AppSection.FAVORITES, medium = true, onClick = onFavoritesClick)
+            SidebarItem(stringResource(R.string.sidebar_tools), Icons.Default.Build, Color(0xFF76507C), activeSection == AppSection.TOOLS, medium = true, onClick = onToolsClick)
 
-            SidebarItem(stringResource(R.string.sidebar_library), Icons.Default.Folder, Burgundy, activeSection == AppSection.LIBRARY, compact, onLibraryClick)
-            SidebarItem(stringResource(R.string.sidebar_repertoires), Icons.Default.LibraryMusic, Navy, activeSection == AppSection.REPERTOIRES, compact, onRepertoiresClick)
-            SidebarItem(stringResource(R.string.sidebar_recents), Icons.Default.History, HeritageGreen, activeSection == AppSection.RECENTS, compact, onRecentsClick)
-            SidebarItem(stringResource(R.string.sidebar_favorites), Icons.Default.Favorite, MutedGold, activeSection == AppSection.FAVORITES, compact, onFavoritesClick)
-            SidebarItem(stringResource(R.string.sidebar_tools), Icons.Default.Build, Color(0xFF76507C), activeSection == AppSection.TOOLS, compact, onToolsClick)
+            Spacer(Modifier.height(12.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable(onClick = onAddContentClick)
+                    .padding(horizontal = 8.dp, vertical = 6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(50.dp)
+                        .background(Burgundy, CircleShape)
+                        .border(2.dp, AgedGold, CircleShape),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = stringResource(R.string.sidebar_add_content), tint = Color.White, modifier = Modifier.size(27.dp))
+                }
+                Spacer(Modifier.width(9.dp))
+                Text(
+                    stringResource(R.string.sidebar_add_content),
+                    color = Navy,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Medium,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+            Spacer(Modifier.height(10.dp))
+        }
+    } else {
+        Column(
+            modifier = Modifier
+                .width(sidebarWidth)
+                .fillMaxHeight()
+                .background(Color(0xAAF7ECD8))
+                .border(1.dp, AgedGold.copy(alpha = 0.45f))
+                .padding(horizontal = 18.dp, vertical = 30.dp),
+        ) {
+            Text(stringResource(R.string.sidebar_good_morning), fontStyle = FontStyle.Italic, fontSize = 19.sp, color = Ink)
+            Text(stringResource(R.string.sidebar_motto), fontStyle = FontStyle.Italic, fontSize = 13.sp, color = MutedInk)
+            Spacer(Modifier.height(34.dp))
+
+            SidebarItem(stringResource(R.string.sidebar_library), Icons.Default.Folder, Burgundy, activeSection == AppSection.LIBRARY, onClick = onLibraryClick)
+            SidebarItem(stringResource(R.string.sidebar_repertoires), Icons.Default.LibraryMusic, Navy, activeSection == AppSection.REPERTOIRES, onClick = onRepertoiresClick)
+            SidebarItem(stringResource(R.string.sidebar_recents), Icons.Default.History, HeritageGreen, activeSection == AppSection.RECENTS, onClick = onRecentsClick)
+            SidebarItem(stringResource(R.string.sidebar_favorites), Icons.Default.Favorite, MutedGold, activeSection == AppSection.FAVORITES, onClick = onFavoritesClick)
+            SidebarItem(stringResource(R.string.sidebar_tools), Icons.Default.Build, Color(0xFF76507C), activeSection == AppSection.TOOLS, onClick = onToolsClick)
 
             Spacer(Modifier.weight(1f))
             Box(
                 modifier = Modifier
-                    .size(if (compact) 62.dp else 76.dp)
+                    .size(76.dp)
                     .align(Alignment.CenterHorizontally)
                     .background(Burgundy, CircleShape)
                     .border(2.dp, AgedGold, CircleShape)
                     .clickable(onClick = onAddContentClick),
                 contentAlignment = Alignment.Center,
             ) {
-                Icon(Icons.Default.Add, contentDescription = stringResource(R.string.sidebar_add_content), tint = Color.White, modifier = Modifier.size(if (compact) 30.dp else 36.dp))
+                Icon(Icons.Default.Add, contentDescription = stringResource(R.string.sidebar_add_content), tint = Color.White, modifier = Modifier.size(36.dp))
             }
-            if (!compact) {
-                Spacer(Modifier.height(8.dp))
-                Text(stringResource(R.string.sidebar_add_content), modifier = Modifier.align(Alignment.CenterHorizontally), color = Ink)
-                Spacer(Modifier.height(26.dp))
-                Text(stringResource(R.string.sidebar_identity), letterSpacing = 3.sp, fontSize = 11.sp, color = MutedInk)
-            }
+            Spacer(Modifier.height(8.dp))
+            Text(stringResource(R.string.sidebar_add_content), modifier = Modifier.align(Alignment.CenterHorizontally), color = Ink)
+            Spacer(Modifier.height(26.dp))
+            Text(stringResource(R.string.sidebar_identity), letterSpacing = 3.sp, fontSize = 11.sp, color = MutedInk)
         }
     }
 }
@@ -1395,32 +1500,37 @@ private fun SidebarItem(
     icon: androidx.compose.ui.graphics.vector.ImageVector,
     sectionColor: Color,
     selected: Boolean = false,
-    compact: Boolean = false,
+    medium: Boolean = false,
     onClick: (() -> Unit)? = null,
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = if (compact) 4.dp else 7.dp)
+            .padding(vertical = if (medium) 3.dp else 7.dp)
             .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
             .background(if (selected) ParchmentCard else Color.Transparent, RoundedCornerShape(16.dp))
-            .padding(if (compact) 7.dp else 10.dp),
+            .padding(if (medium) 7.dp else 10.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = if (compact) Arrangement.Center else Arrangement.Start,
+        horizontalArrangement = Arrangement.Start,
     ) {
         Box(
             modifier = Modifier
-                .size(if (compact) 48.dp else 46.dp)
+                .size(if (medium) 42.dp else 46.dp)
                 .background(sectionColor, CircleShape)
                 .border(1.dp, AgedGold, CircleShape),
             contentAlignment = Alignment.Center,
         ) {
-            Icon(icon, contentDescription = label, tint = Color.White, modifier = Modifier.size(26.dp))
+            Icon(icon, contentDescription = label, tint = Color.White, modifier = Modifier.size(if (medium) 23.dp else 26.dp))
         }
-        if (!compact) {
-            Spacer(Modifier.width(12.dp))
-            Text(label, fontSize = 20.sp, color = if (selected) sectionColor else Navy, fontWeight = FontWeight.Medium)
-        }
+        Spacer(Modifier.width(if (medium) 9.dp else 12.dp))
+        Text(
+            label,
+            fontSize = if (medium) 16.sp else 20.sp,
+            color = if (selected) sectionColor else Navy,
+            fontWeight = FontWeight.Medium,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+        )
     }
 }
 
@@ -1440,6 +1550,7 @@ private fun SpecialCollectionShell(
     onFavoritesClick: () -> Unit,
     onAddContentClick: () -> Unit,
     onToolsClick: () -> Unit = {},
+    onOpenEasterEgg: () -> Unit,
 ) {
     var filter by remember(section) { mutableStateOf("") }
     val filtered = remember(pdfs, filter) {
@@ -1448,29 +1559,56 @@ private fun SpecialCollectionShell(
         }
     }
 
-    Row(Modifier.fillMaxSize()) {
-        Sidebar(
+    Box(Modifier.fillMaxSize()) {
+        AdaptiveNavigationScaffold(
             activeSection = section,
             onLibraryClick = onLibraryClick,
             onRepertoiresClick = onRepertoiresClick,
             onRecentsClick = onRecentsClick,
             onFavoritesClick = onFavoritesClick,
-            onAddContentClick = onAddContentClick,
             onToolsClick = onToolsClick,
-        )
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxHeight()
-                .padding(start = 26.dp, end = 38.dp, top = 18.dp, bottom = 24.dp),
+            onAddContentClick = onAddContentClick,
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                CimoPlaceholder()
-                Spacer(Modifier.width(12.dp))
+            val compact = LocalAdaptiveWindowSize.current == AdaptiveWindowSize.COMPACT
+            Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(
+                    start = if (compact) 12.dp else 26.dp,
+                    end = if (compact) 12.dp else 38.dp,
+                    top = if (compact) 8.dp else 18.dp,
+                    bottom = if (compact) 8.dp else 24.dp,
+                ),
+        ) {
+            val collectionHeaderModifier = if (compact) {
+                Modifier.pointerInput(Unit) {
+                    detectTapGestures(
+                        onPress = {
+                            coroutineScope {
+                                val trigger = launch {
+                                    delay(3_000)
+                                    onOpenEasterEgg()
+                                }
+                                tryAwaitRelease()
+                                trigger.cancel()
+                            }
+                        }
+                    )
+                }
+            } else {
+                Modifier
+            }
+
+            Row(
+                modifier = collectionHeaderModifier,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                CimoPlaceholder(size = if (compact) 42.dp else 64.dp)
+                Spacer(Modifier.width(if (compact) 8.dp else 12.dp))
                 Column {
-                    AppTitle()
-                    Text(title, fontSize = 26.sp, color = Burgundy, fontWeight = FontWeight.SemiBold)
-                    Text(subtitle, fontSize = 13.sp, color = MutedInk)
+                    AppTitle(fontSize = if (compact) 25.sp else 34.sp)
+                    Text(title, fontSize = if (compact) 21.sp else 26.sp, color = Burgundy, fontWeight = FontWeight.SemiBold)
+                    if (!compact) Text(subtitle, fontSize = 13.sp, color = MutedInk)
                 }
             }
             Spacer(Modifier.height(14.dp))
@@ -1526,6 +1664,30 @@ private fun SpecialCollectionShell(
                     onToggleFavorite = onToggleFavorite,
                 )
             }
+        }
+        }
+
+        if (LocalAdaptiveWindowSize.current != AdaptiveWindowSize.COMPACT) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(end = 6.dp, bottom = 4.dp)
+                    .size(92.dp)
+                    .pointerInput(Unit) {
+                        detectTapGestures(
+                            onPress = {
+                                coroutineScope {
+                                    val trigger = launch {
+                                        delay(3_000)
+                                        onOpenEasterEgg()
+                                    }
+                                    tryAwaitRelease()
+                                    trigger.cancel()
+                                }
+                            }
+                        )
+                    }
+            )
         }
     }
 }
@@ -1767,16 +1929,16 @@ private fun ErrorPanel(message: String, onChangeRoot: () -> Unit) {
 }
 
 @Composable
-internal fun CimoPlaceholder() {
+internal fun CimoPlaceholder(size: androidx.compose.ui.unit.Dp = 64.dp) {
     Image(
         painter = painterResource(com.partituresfesteres.app.R.drawable.brand_emblem),
         contentDescription = stringResource(R.string.musical_emblem),
-        modifier = Modifier.size(64.dp),
+        modifier = Modifier.size(size),
         contentScale = ContentScale.Fit,
     )
 }
 
 @Composable
-internal fun AppTitle() {
-    Text(stringResource(R.string.partitures_festeres), fontSize = 34.sp, color = Burgundy, fontWeight = FontWeight.SemiBold)
+internal fun AppTitle(fontSize: androidx.compose.ui.unit.TextUnit = 34.sp) {
+    Text(stringResource(R.string.partitures_festeres), fontSize = fontSize, color = Burgundy, fontWeight = FontWeight.SemiBold)
 }

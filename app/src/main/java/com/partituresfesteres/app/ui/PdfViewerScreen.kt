@@ -3,7 +3,6 @@ package com.partituresfesteres.app.ui
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
-import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
 import android.graphics.Paint
 import android.graphics.DashPathEffect
@@ -2180,86 +2179,163 @@ private fun ViewerMenu(
     onStartAnnotations: () -> Unit,
     onToggleAnnotationsVisible: () -> Unit,
 ) {
+    val compact = LocalAdaptiveWindowSize.current == AdaptiveWindowSize.COMPACT
+
     Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.SpaceBetween) {
         Surface(color = Color.White.copy(alpha = 0.94f), elevation = 5.dp) {
-            Row(
-                modifier = Modifier.fillMaxWidth().height(62.dp).padding(horizontal = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                IconButton(onClick = onClose) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.viewer_return), tint = Ink)
-                }
-                Spacer(Modifier.width(8.dp))
-                Text(
-                    text = title,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Ink,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f),
-                )
-                IconButton(onClick = onOpenScoreList) {
-                    Icon(Icons.Default.Search, contentDescription = stringResource(R.string.viewer_search_jump), tint = Ink)
-                }
-                IconButton(onClick = onOpenTools) {
-                    Icon(Icons.Default.Build, contentDescription = stringResource(R.string.viewer_tools), tint = Color(0xFF76507C))
-                }
-                IconButton(onClick = onRotateLeft) {
-                    Icon(Icons.Default.RotateLeft, contentDescription = stringResource(R.string.rotate_left), tint = Navy)
-                }
-                IconButton(onClick = onRotateRight) {
-                    Icon(Icons.Default.RotateRight, contentDescription = stringResource(R.string.rotate_right), tint = Navy)
-                }
-                IconButton(onClick = onOpenRepair) {
-                    Icon(Icons.Default.Crop, contentDescription = stringResource(R.string.repair_pdf_view), tint = Burgundy)
-                }
-                IconButton(onClick = onStartAnnotations) {
-                    Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.annotate), tint = Navy)
-                }
-                if (hasAnnotations) {
-                    IconButton(onClick = onToggleAnnotationsVisible) {
-                        Icon(
-                            if (annotationsVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                            contentDescription = if (annotationsVisible) stringResource(R.string.hide_annotations) else stringResource(R.string.show_annotations),
-                            tint = Ink,
+            if (compact) {
+                Column(Modifier.fillMaxWidth()) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().height(50.dp).padding(horizontal = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        IconButton(onClick = onClose) {
+                            Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.viewer_return), tint = Ink)
+                        }
+                        Spacer(Modifier.width(4.dp))
+                        Text(
+                            text = title,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Ink,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.weight(1f),
                         )
+                        IconButton(onClick = onToggleFavorite) {
+                            Icon(
+                                if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                contentDescription = if (isFavorite) stringResource(R.string.remove_favorite) else stringResource(R.string.add_favorite),
+                                tint = Burgundy,
+                            )
+                        }
+                    }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .horizontalScroll(rememberScrollState())
+                            .padding(horizontal = 8.dp, vertical = 2.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        IconButton(onClick = onOpenScoreList) {
+                            Icon(Icons.Default.Search, contentDescription = stringResource(R.string.viewer_search_jump), tint = Ink)
+                        }
+                        IconButton(onClick = onOpenTools) {
+                            Icon(Icons.Default.Build, contentDescription = stringResource(R.string.viewer_tools), tint = Color(0xFF76507C))
+                        }
+                        IconButton(onClick = onRotateLeft) {
+                            Icon(Icons.Default.RotateLeft, contentDescription = stringResource(R.string.rotate_left), tint = Navy)
+                        }
+                        IconButton(onClick = onRotateRight) {
+                            Icon(Icons.Default.RotateRight, contentDescription = stringResource(R.string.rotate_right), tint = Navy)
+                        }
+                        IconButton(onClick = onOpenRepair) {
+                            Icon(Icons.Default.Crop, contentDescription = stringResource(R.string.repair_pdf_view), tint = Burgundy)
+                        }
+                        IconButton(onClick = onStartAnnotations) {
+                            Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.annotate), tint = Navy)
+                        }
+                        if (hasAnnotations) {
+                            IconButton(onClick = onToggleAnnotationsVisible) {
+                                Icon(
+                                    if (annotationsVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                                    contentDescription = if (annotationsVisible) stringResource(R.string.hide_annotations) else stringResource(R.string.show_annotations),
+                                    tint = Ink,
+                                )
+                            }
+                        }
+                        Spacer(Modifier.width(4.dp))
+                        Text("${(zoom * 100).roundToInt()}%", color = Ink, fontSize = 14.sp)
+                        IconButton(onClick = onResetZoom) {
+                            Icon(Icons.Default.Refresh, contentDescription = stringResource(R.string.reset_zoom), tint = Burgundy)
+                        }
                     }
                 }
-                IconButton(onClick = onToggleFavorite) {
-                    Icon(
-                        if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                        contentDescription = if (isFavorite) stringResource(R.string.remove_favorite) else stringResource(R.string.add_favorite),
-                        tint = Burgundy,
+            } else {
+                Row(
+                    modifier = Modifier.fillMaxWidth().height(62.dp).padding(horizontal = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    IconButton(onClick = onClose) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.viewer_return), tint = Ink)
+                    }
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        text = title,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Ink,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f),
                     )
-                }
-                Text("${(zoom * 100).roundToInt()}%", color = Ink, fontSize = 15.sp)
-                IconButton(onClick = onResetZoom) {
-                    Icon(Icons.Default.Refresh, contentDescription = stringResource(R.string.reset_zoom), tint = Burgundy)
+                    IconButton(onClick = onOpenScoreList) {
+                        Icon(Icons.Default.Search, contentDescription = stringResource(R.string.viewer_search_jump), tint = Ink)
+                    }
+                    IconButton(onClick = onOpenTools) {
+                        Icon(Icons.Default.Build, contentDescription = stringResource(R.string.viewer_tools), tint = Color(0xFF76507C))
+                    }
+                    IconButton(onClick = onRotateLeft) {
+                        Icon(Icons.Default.RotateLeft, contentDescription = stringResource(R.string.rotate_left), tint = Navy)
+                    }
+                    IconButton(onClick = onRotateRight) {
+                        Icon(Icons.Default.RotateRight, contentDescription = stringResource(R.string.rotate_right), tint = Navy)
+                    }
+                    IconButton(onClick = onOpenRepair) {
+                        Icon(Icons.Default.Crop, contentDescription = stringResource(R.string.repair_pdf_view), tint = Burgundy)
+                    }
+                    IconButton(onClick = onStartAnnotations) {
+                        Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.annotate), tint = Navy)
+                    }
+                    if (hasAnnotations) {
+                        IconButton(onClick = onToggleAnnotationsVisible) {
+                            Icon(
+                                if (annotationsVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                                contentDescription = if (annotationsVisible) stringResource(R.string.hide_annotations) else stringResource(R.string.show_annotations),
+                                tint = Ink,
+                            )
+                        }
+                    }
+                    IconButton(onClick = onToggleFavorite) {
+                        Icon(
+                            if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                            contentDescription = if (isFavorite) stringResource(R.string.remove_favorite) else stringResource(R.string.add_favorite),
+                            tint = Burgundy,
+                        )
+                    }
+                    Text("${(zoom * 100).roundToInt()}%", color = Ink, fontSize = 15.sp)
+                    IconButton(onClick = onResetZoom) {
+                        Icon(Icons.Default.Refresh, contentDescription = stringResource(R.string.reset_zoom), tint = Burgundy)
+                    }
                 }
             }
         }
 
         Surface(color = Color.White.copy(alpha = 0.94f), elevation = 5.dp) {
             Row(
-                modifier = Modifier.fillMaxWidth().height(54.dp).padding(horizontal = 22.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+                    .horizontalScroll(rememberScrollState())
+                    .padding(horizontal = if (compact) 12.dp else 22.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
             ) {
-                Text(stringResource(R.string.page_count, pageIndex + 1, pageCount), color = Ink, fontSize = 15.sp, fontWeight = FontWeight.Medium)
-                Spacer(Modifier.width(18.dp))
+                Text(stringResource(R.string.page_count, pageIndex + 1, pageCount), color = Ink, fontSize = if (compact) 13.sp else 15.sp, fontWeight = FontWeight.Medium)
+                Spacer(Modifier.width(14.dp))
                 Text("•", color = Color.Gray)
-                Spacer(Modifier.width(18.dp))
-                Text(stringResource(R.string.score_position, scorePosition, totalScores), color = Color.DarkGray, fontSize = 15.sp)
+                Spacer(Modifier.width(14.dp))
+                Text(stringResource(R.string.score_position, scorePosition, totalScores), color = Color.DarkGray, fontSize = if (compact) 13.sp else 15.sp)
                 if (rotationDegrees != 0) {
-                    Spacer(Modifier.width(18.dp))
+                    Spacer(Modifier.width(14.dp))
                     Text("•", color = Color.Gray)
-                    Spacer(Modifier.width(18.dp))
-                    Text(stringResource(R.string.rotation_value, rotationDegrees), color = Navy, fontSize = 14.sp)
+                    Spacer(Modifier.width(14.dp))
+                    Text(stringResource(R.string.rotation_value, rotationDegrees), color = Navy, fontSize = 13.sp)
                 }
             }
         }
     }
+
 }
 
 @Composable
@@ -2355,19 +2431,19 @@ private fun ViewerError(message: String, onClose: () -> Unit) {
 
 @Composable
 private fun ViewerEnvironment(activity: Activity?, settings: AppSettings) {
-    DisposableEffect(activity, settings.keepScreenOn, settings.allowViewerRotation, settings.overrideBrightness, settings.brightnessPercent) {
+    DisposableEffect(activity, settings.keepScreenOn, settings.overrideBrightness, settings.brightnessPercent) {
         if (activity == null) {
             onDispose { }
         } else {
-            val previousOrientation = activity.requestedOrientation
+            // IMPORTANT: l'orientació NO es modifica ací. El visor viu en una
+            // PdfViewerActivity independent que fixa la seua política una sola
+            // vegada en onCreate. Això evita els bucles de rotació observats en
+            // algunes tablets (especialment OnePlus/Nokia).
             val previousBrightness = activity.window.attributes.screenBrightness
-            activity.requestedOrientation = if (settings.allowViewerRotation) {
-                ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
-            } else {
-                ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
-            }
             if (settings.keepScreenOn) {
                 activity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            } else {
+                activity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
             }
             if (settings.overrideBrightness) {
                 val attributes = activity.window.attributes
@@ -2405,15 +2481,11 @@ private fun ViewerEnvironment(activity: Activity?, settings: AppSettings) {
                 val restoreAttributes = activity.window.attributes
                 restoreAttributes.screenBrightness = previousBrightness
                 activity.window.attributes = restoreAttributes
-                activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     activity.window.insetsController?.show(WindowInsets.Type.statusBars() or WindowInsets.Type.navigationBars())
                 } else {
                     @Suppress("DEPRECATION")
                     run { decorView.systemUiVisibility = previousSystemUi }
-                }
-                if (previousOrientation != ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED) {
-                    activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
                 }
             }
         }

@@ -27,7 +27,7 @@
     <string name="settings_select_root">Seleccionar carpeta raíz</string>
     <string name="settings_create_backup">Crear copia de seguridad</string>
     <string name="settings_restore_backup">Restaurar copia</string>
-    <string name="settings_version">Versión 1.6.4</string>
+    <string name="settings_version">Versión 1.8.0</string>
     <string name="settings_backup_desc">La copia guarda repertorios, favoritos, recientes, anotaciones, zoom y ajustes; no duplica los PDF.</string>
     <string name="settings_saved">Ajustes guardados.</string>
     <string name="sidebar_good_morning">Buenos días</string>
@@ -278,4 +278,35 @@ La biblioteca se creará automáticamente a partir de las carpetas que haya dent
     <string name="metronome_start">Iniciar</string>
     <string name="app_copyright">© 2026 Santi Milla Navarro</string>
     <string name="metronome_compound_desc">Compás compuesto: el BPM marca el pulso principal y cada pulso se divide en tres corcheas. Sonido seco de metrónomo mecánico con acento al comienzo del compás.</string>
+    <string name="mystery_tab">\?\?\?</string>
+    <string name="mystery_hint">Cuando el acto se hace largo, fíjate en los detalles que siempre tienes delante. Algunos esconden más de lo que parece… si les das tres tiempos.</string>
+    <string name="easter_score">Puntuación: %1$d</string>
+    <string name="easter_best">Récord: %1$d</string>
+    <string name="easter_exit">Salir</string>
+    <string name="easter_tap_to_start">Toca para empezar</string>
+    <string name="easter_jump_hint">Toca la pantalla para saltar</string>
+    <string name="easter_game_over">Fin de la partida</string>
+    <string name="easter_play_again">Volver a jugar</string>
+
+    <string name="dictation_musical">Dictado musical</string>
+    <string name="dictation_marina">Dictado Marina</string>
+    <string name="dictation_start">Empezar dictado</string>
+    <string name="dictation_stop">Terminar dictado</string>
+    <string name="dictation_clear">Limpiar</string>
+    <string name="dictation_listening">Escuchando… toca notas claras y sostenidas.</string>
+    <string name="dictation_listening_marina">Escuchando… habla, canta o improvisa; las alturas se irán dibujando rápidamente.</string>
+    <string name="dictation_empty">Todavía no hay notas. Pulsa «Empezar dictado» y toca el instrumento.</string>
+    <string name="dictation_empty_marina">Todavía no hay notas. Activa Dictado Marina y habla, canta o di cualquier cosa.</string>
+    <string name="dictation_pitch_only">Primera versión: transcribe la altura de las notas; el ritmo se representa con negras.</string>
+    <string name="dictation_pitch_only_marina">Modo lúdico: plasma rápidamente la voz en el pentagrama. No es un dictado riguroso; es una “melodía hablada”.</string>
+    <string name="dictation_save_image">Guardar imagen</string>
+    <string name="dictation_share">Compartir</string>
+    <string name="dictation_saved">Imagen guardada.</string>
+    <string name="dictation_save_error">No se ha podido guardar la imagen.</string>
+    <string name="dictation_share_error">No se ha podido compartir la imagen.</string>
+    <string name="dictation_permission">Dictado musical necesita permiso de micrófono.</string>
+    <string name="dictation_notes_count">%1$d notas</string>
+    <string name="dictation_marina_hint">Modo de voz divertida</string>
+    <string name="dictation_marina_bubble">¡Hola! Háblame un poco y convertiré tu voz en una lluvia de notas.</string>
+    <string name="dictation_marina_pitch_fun">Detecta las alturas de la voz casi en tiempo real y las escribe en el pentagrama para que luego puedas guardarlas o compartirlas.</string>
 </resources>

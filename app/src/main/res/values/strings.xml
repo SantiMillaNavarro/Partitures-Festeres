@@ -27,7 +27,7 @@
     <string name="settings_select_root">Seleccionar carpeta arrel</string>
     <string name="settings_create_backup">Crear còpia de seguretat</string>
     <string name="settings_restore_backup">Restaurar còpia</string>
-    <string name="settings_version">Versió 1.6.4</string>
+    <string name="settings_version">Versió 1.8.0</string>
     <string name="settings_backup_desc">La còpia guarda repertoris, favorits, recents, anotacions, zoom i ajustos; no duplica els PDF.</string>
     <string name="settings_saved">Ajustos guardats.</string>
     <string name="sidebar_good_morning">Bon dia</string>
@@ -278,4 +278,35 @@ La biblioteca es crearà automàticament a partir de les carpetes que hi haja di
     <string name="metronome_start">Iniciar</string>
     <string name="app_copyright">© 2026 Santi Milla Navarro</string>
     <string name="metronome_compound_desc">Compàs compost: el BPM marca el pols principal i cada pols es divideix en tres corxeres. So sec de metrònom mecànic amb accent al començament del compàs.</string>
+    <string name="mystery_tab">\?\?\?</string>
+    <string name="mystery_hint">Quan l’acte es fa llarg, fixa’t en els detalls que sempre tens davant. Alguns amaguen més del que sembla… si els dones tres temps.</string>
+    <string name="easter_score">Puntuació: %1$d</string>
+    <string name="easter_best">Rècord: %1$d</string>
+    <string name="easter_exit">Eixir</string>
+    <string name="easter_tap_to_start">Toca per començar</string>
+    <string name="easter_jump_hint">Toca la pantalla per saltar</string>
+    <string name="easter_game_over">Fi de la partida</string>
+    <string name="easter_play_again">Torna a jugar</string>
+
+    <string name="dictation_musical">Dictat Musical</string>
+    <string name="dictation_marina">Dictat Marina</string>
+    <string name="dictation_start">Començar dictat</string>
+    <string name="dictation_stop">Acabar dictat</string>
+    <string name="dictation_clear">Netejar</string>
+    <string name="dictation_listening">Escoltant… toca notes clares i sostingudes.</string>
+    <string name="dictation_listening_marina">Escoltant… parla, canta o improvisa; les altures s’aniran dibuixant ràpidament.</string>
+    <string name="dictation_empty">Encara no hi ha notes. Prem «Començar dictat» i toca l’instrument.</string>
+    <string name="dictation_empty_marina">Encara no hi ha notes. Activa Dictat Marina i parla, canta o diu qualsevol cosa.</string>
+    <string name="dictation_pitch_only">Primera versió: transcriu l’altura de les notes; el ritme es representa amb negres.</string>
+    <string name="dictation_pitch_only_marina">Mode lúdic: plasma amb rapidesa la veu en el pentagrama. No és un dictat rigorós; és una “melodia parlada”.</string>
+    <string name="dictation_save_image">Guardar imatge</string>
+    <string name="dictation_share">Compartir</string>
+    <string name="dictation_saved">Imatge guardada.</string>
+    <string name="dictation_save_error">No s’ha pogut guardar la imatge.</string>
+    <string name="dictation_share_error">No s’ha pogut compartir la imatge.</string>
+    <string name="dictation_permission">Dictat Musical necessita permís de micròfon.</string>
+    <string name="dictation_notes_count">%1$d notes</string>
+    <string name="dictation_marina_hint">Mode de veu divertida</string>
+    <string name="dictation_marina_bubble">Hola! Parla’m un poc i et convertiré la veu en una pluja de notes.</string>
+    <string name="dictation_marina_pitch_fun">Detecta les alçades de la veu quasi en temps real i les escriu sobre el pentagrama perquè després pugues guardar-les o compartir-les.</string>
 </resources>

@@ -10,6 +10,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -76,13 +80,17 @@ import com.partituresfesteres.app.ui.theme.MutedGold
 import com.partituresfesteres.app.ui.theme.MutedInk
 import com.partituresfesteres.app.ui.theme.Navy
 import com.partituresfesteres.app.ui.theme.ParchmentCard
+import androidx.compose.ui.input.pointer.pointerInput
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.sin
 import kotlin.math.pow
 
-private enum class ToolTab { TUNER, METRONOME, REFERENCE }
+private enum class ToolTab { TUNER, METRONOME, REFERENCE, DICTATION, MYSTERY }
 
 private data class PitchHistoryPoint(
     val elapsedMs: Long,
@@ -100,45 +108,106 @@ fun ToolsScreen(
     onFavoritesClick: () -> Unit,
     onToolsClick: () -> Unit,
     onAddContentClick: () -> Unit,
+    onOpenEasterEgg: () -> Unit,
 ) {
     var tab by remember { mutableStateOf(ToolTab.TUNER) }
-    Row(Modifier.fillMaxSize()) {
-        Sidebar(
-            activeSection = AppSection.TOOLS,
-            onLibraryClick = onLibraryClick,
-            onRepertoiresClick = onRepertoiresClick,
-            onRecentsClick = onRecentsClick,
-            onFavoritesClick = onFavoritesClick,
-            onToolsClick = onToolsClick,
-            onAddContentClick = onAddContentClick,
-        )
+    Box(Modifier.fillMaxSize()) {
+    AdaptiveNavigationScaffold(
+        activeSection = AppSection.TOOLS,
+        onLibraryClick = onLibraryClick,
+        onRepertoiresClick = onRepertoiresClick,
+        onRecentsClick = onRecentsClick,
+        onFavoritesClick = onFavoritesClick,
+        onToolsClick = onToolsClick,
+        onAddContentClick = onAddContentClick,
+    ) {
+        val compact = LocalAdaptiveWindowSize.current == AdaptiveWindowSize.COMPACT
         Column(
             modifier = Modifier
-                .weight(1f)
-                .fillMaxHeight()
-                .padding(start = 22.dp, end = 28.dp, top = 14.dp, bottom = 18.dp),
+                .fillMaxSize()
+                .padding(
+                    start = if (compact) 10.dp else 22.dp,
+                    end = if (compact) 10.dp else 28.dp,
+                    top = if (compact) 6.dp else 14.dp,
+                    bottom = if (compact) 6.dp else 18.dp,
+                ),
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                CimoPlaceholder()
-                Spacer(Modifier.width(12.dp))
+            val toolsHeaderModifier = if (compact) {
+                Modifier.pointerInput(Unit) {
+                    detectTapGestures(
+                        onPress = {
+                            coroutineScope {
+                                val trigger = launch {
+                                    delay(3_000)
+                                    onOpenEasterEgg()
+                                }
+                                tryAwaitRelease()
+                                trigger.cancel()
+                            }
+                        }
+                    )
+                }
+            } else {
+                Modifier
+            }
+
+            Row(
+                modifier = toolsHeaderModifier,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                CimoPlaceholder(size = if (compact) 40.dp else 64.dp)
+                Spacer(Modifier.width(if (compact) 7.dp else 12.dp))
                 Column {
-                    AppTitle()
-                    Text(stringResource(R.string.tools_title), fontSize = 24.sp, color = Burgundy, fontWeight = FontWeight.SemiBold)
+                    AppTitle(fontSize = if (compact) 24.sp else 34.sp)
+                    Text(stringResource(R.string.tools_title), fontSize = if (compact) 19.sp else 24.sp, color = Burgundy, fontWeight = FontWeight.SemiBold)
                 }
             }
-            Spacer(Modifier.height(10.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                ToolTabButton(stringResource(R.string.tuner), tab == ToolTab.TUNER) { tab = ToolTab.TUNER }
-                ToolTabButton(stringResource(R.string.metronome), tab == ToolTab.METRONOME) { tab = ToolTab.METRONOME }
-                ToolTabButton(stringResource(R.string.reference_note), tab == ToolTab.REFERENCE) { tab = ToolTab.REFERENCE }
+            Spacer(Modifier.height(if (compact) 5.dp else 10.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(if (compact) 6.dp else 10.dp),
+            ) {
+                ToolTabButton(stringResource(R.string.tuner), tab == ToolTab.TUNER, compact) { tab = ToolTab.TUNER }
+                ToolTabButton(stringResource(R.string.metronome), tab == ToolTab.METRONOME, compact) { tab = ToolTab.METRONOME }
+                ToolTabButton(stringResource(R.string.reference_note), tab == ToolTab.REFERENCE, compact) { tab = ToolTab.REFERENCE }
+                ToolTabButton(stringResource(R.string.dictation_musical), tab == ToolTab.DICTATION, compact) { tab = ToolTab.DICTATION }
+                ToolTabButton(stringResource(R.string.mystery_tab), tab == ToolTab.MYSTERY, compact) { tab = ToolTab.MYSTERY }
             }
-            Spacer(Modifier.height(10.dp))
-            when (tab) {
-                ToolTab.TUNER -> TunerPanel(tunerReferenceHz, onTunerReferenceChange)
-                ToolTab.METRONOME -> MetronomePanel()
-                ToolTab.REFERENCE -> ReferenceTonePanel(tunerReferenceHz)
+            Spacer(Modifier.height(if (compact) 6.dp else 10.dp))
+            Box(Modifier.fillMaxSize()) {
+                when (tab) {
+                    ToolTab.TUNER -> TunerPanel(tunerReferenceHz, onTunerReferenceChange)
+                    ToolTab.METRONOME -> MetronomePanel()
+                    ToolTab.REFERENCE -> ReferenceTonePanel(tunerReferenceHz)
+                    ToolTab.DICTATION -> DictationMarinaPanel(tunerReferenceHz)
+                    ToolTab.MYSTERY -> MysteryPanel()
+                }
             }
         }
+    }
+
+    if (LocalAdaptiveWindowSize.current != AdaptiveWindowSize.COMPACT) {
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(end = 6.dp, bottom = 4.dp)
+                .size(92.dp)
+                .pointerInput(Unit) {
+                    detectTapGestures(
+                        onPress = {
+                            coroutineScope {
+                                val trigger = launch {
+                                    delay(3_000)
+                                    onOpenEasterEgg()
+                                }
+                                tryAwaitRelease()
+                                trigger.cancel()
+                            }
+                        }
+                    )
+                }
+        )
+    }
     }
 }
 
@@ -153,42 +222,52 @@ fun ViewerToolsDialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false),
     ) {
+        val compact = LocalAdaptiveWindowSize.current == AdaptiveWindowSize.COMPACT
         Surface(
             modifier = Modifier
-                .fillMaxWidth(0.94f)
-                .fillMaxHeight(0.91f),
+                .fillMaxWidth(if (compact) 0.98f else 0.94f)
+                .fillMaxHeight(if (compact) 0.96f else 0.91f),
             color = Color(0xFFF4E8D2),
-            shape = RoundedCornerShape(24.dp),
+            shape = RoundedCornerShape(if (compact) 18.dp else 24.dp),
             elevation = 12.dp,
         ) {
-            Column(Modifier.fillMaxSize().padding(14.dp)) {
+            Column(Modifier.fillMaxSize().padding(if (compact) 9.dp else 14.dp)) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Text(
                         stringResource(R.string.tools_title),
                         color = Burgundy,
-                        fontSize = 21.sp,
+                        fontSize = if (compact) 18.sp else 21.sp,
                         fontWeight = FontWeight.Bold,
                     )
                     Spacer(Modifier.weight(1f))
-                    ToolTabButton(stringResource(R.string.tuner), tab == ToolTab.TUNER) { tab = ToolTab.TUNER }
-                    ToolTabButton(stringResource(R.string.metronome), tab == ToolTab.METRONOME) { tab = ToolTab.METRONOME }
-                    ToolTabButton(stringResource(R.string.note), tab == ToolTab.REFERENCE) { tab = ToolTab.REFERENCE }
                     TextButton(onClick = onDismiss) {
                         Icon(Icons.Default.Close, contentDescription = stringResource(R.string.close), tint = Burgundy)
-                        Spacer(Modifier.width(4.dp))
-                        Text(stringResource(R.string.close), color = Burgundy)
+                        if (!compact) {
+                            Spacer(Modifier.width(4.dp))
+                            Text(stringResource(R.string.close), color = Burgundy)
+                        }
                     }
                 }
-                Spacer(Modifier.height(10.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(if (compact) 6.dp else 8.dp),
+                ) {
+                    ToolTabButton(stringResource(R.string.tuner), tab == ToolTab.TUNER, compact) { tab = ToolTab.TUNER }
+                    ToolTabButton(stringResource(R.string.metronome), tab == ToolTab.METRONOME, compact) { tab = ToolTab.METRONOME }
+                    ToolTabButton(stringResource(R.string.note), tab == ToolTab.REFERENCE, compact) { tab = ToolTab.REFERENCE }
+                    ToolTabButton(stringResource(R.string.dictation_musical), tab == ToolTab.DICTATION, compact) { tab = ToolTab.DICTATION }
+                }
+                Spacer(Modifier.height(if (compact) 6.dp else 10.dp))
                 Box(Modifier.fillMaxSize()) {
                     when (tab) {
                         ToolTab.TUNER -> TunerPanel(tunerReferenceHz, onTunerReferenceChange)
                         ToolTab.METRONOME -> MetronomePanel()
                         ToolTab.REFERENCE -> ReferenceTonePanel(tunerReferenceHz)
+                        ToolTab.DICTATION -> DictationMarinaPanel(tunerReferenceHz)
+                        ToolTab.MYSTERY -> MysteryPanel()
                     }
                 }
             }
@@ -197,7 +276,43 @@ fun ViewerToolsDialog(
 }
 
 @Composable
-private fun ToolTabButton(label: String, selected: Boolean, onClick: () -> Unit) {
+private fun MysteryPanel() {
+    val compact = LocalAdaptiveWindowSize.current == AdaptiveWindowSize.COMPACT
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = if (compact) 10.dp else 26.dp, vertical = if (compact) 12.dp else 28.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        FestivePanel(
+            modifier = Modifier.fillMaxWidth(if (compact) 0.98f else 0.72f),
+            cornerRadius = 22.dp,
+            backgroundColor = ParchmentCard.copy(alpha = 0.94f),
+        ) {
+            Column(
+                modifier = Modifier.padding(horizontal = if (compact) 22.dp else 38.dp, vertical = if (compact) 24.dp else 34.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Text(
+                    text = "???",
+                    color = MutedGold,
+                    fontSize = if (compact) 28.sp else 34.sp,
+                    fontWeight = FontWeight.Bold,
+                )
+                Spacer(Modifier.height(if (compact) 14.dp else 20.dp))
+                Text(
+                    text = stringResource(R.string.mystery_hint),
+                    color = Ink,
+                    fontSize = if (compact) 16.sp else 19.sp,
+                    lineHeight = if (compact) 23.sp else 28.sp,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ToolTabButton(label: String, selected: Boolean, compact: Boolean = false, onClick: () -> Unit) {
     FestiveChoice(
         selected = selected,
         onClick = onClick,
@@ -209,7 +324,7 @@ private fun ToolTabButton(label: String, selected: Boolean, onClick: () -> Unit)
             label,
             color = if (selected) Color.White else Navy,
             fontWeight = FontWeight.SemiBold,
-            fontSize = 16.sp,
+            fontSize = if (compact) 13.sp else 16.sp,
         )
     }
 }
@@ -265,39 +380,34 @@ private fun TunerPanel(
         onDispose { engine.stop() }
     }
 
+    val compact = LocalAdaptiveWindowSize.current == AdaptiveWindowSize.COMPACT
+
     FestivePanel(
         modifier = Modifier.fillMaxSize(),
         cornerRadius = 22.dp,
         backgroundColor = ParchmentCard,
     ) {
-        Row(
-            Modifier.fillMaxSize().padding(horizontal = 22.dp, vertical = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(22.dp),
-        ) {
+        if (compact) {
             Column(
-                modifier = Modifier.weight(1.16f).fillMaxHeight(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 14.dp, vertical = 10.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(
-                    reading?.noteName ?: "—",
-                    fontSize = 58.sp,
-                    color = Navy,
-                    fontWeight = FontWeight.Bold,
-                )
+                Text(reading?.noteName ?: "—", fontSize = 44.sp, color = Navy, fontWeight = FontWeight.Bold)
                 Text(
                     reading?.let { "%.2f Hz".format(it.frequencyHz) } ?: stringResource(R.string.listening),
-                    fontSize = 16.sp,
+                    fontSize = 14.sp,
                     color = MutedInk,
                 )
-
-                TunerGauge(reading, Modifier.fillMaxWidth().weight(1f))
-
+                TunerGauge(reading, Modifier.fillMaxWidth().height(150.dp))
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     listOf("−50", "−25", "0", "+25", "+50").forEach {
-                        Text(it, color = if (it == "0") HeritageGreen else MutedInk, fontSize = 12.sp)
+                        Text(it, color = if (it == "0") HeritageGreen else MutedInk, fontSize = 11.sp)
                     }
                 }
                 reading?.let {
@@ -306,11 +416,10 @@ private fun TunerPanel(
                         "$prefix${it.cents.roundToInt()} cents · ${if (it.stable) stringResource(R.string.tuner_status_in_tune) else if (it.cents < 0) stringResource(R.string.tuner_status_low) else stringResource(R.string.tuner_status_high)}",
                         color = if (it.stable) HeritageGreen else Burgundy,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
+                        fontSize = 14.sp,
                     )
-                } ?: Text(stringResource(R.string.in_tune_zone), color = HeritageGreen, fontSize = 13.sp)
-
-                Spacer(Modifier.height(8.dp))
+                } ?: Text(stringResource(R.string.in_tune_zone), color = HeritageGreen, fontSize = 12.sp)
+                Spacer(Modifier.height(7.dp))
                 Button(
                     onClick = {
                         if (!hasPermission) permissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
@@ -323,21 +432,18 @@ private fun TunerPanel(
                     shape = RoundedCornerShape(14.dp),
                 ) {
                     Icon(if (running) Icons.Default.Stop else Icons.Default.Mic, contentDescription = null)
-                    Spacer(Modifier.width(8.dp))
+                    Spacer(Modifier.width(7.dp))
                     Text(if (running) stringResource(R.string.stop) else stringResource(R.string.start))
                 }
                 if (!hasPermission) {
-                    Spacer(Modifier.height(5.dp))
-                    Text(stringResource(R.string.tuner_permission), color = MutedInk, fontSize = 12.sp)
+                    Spacer(Modifier.height(4.dp))
+                    Text(stringResource(R.string.tuner_permission), color = MutedInk, fontSize = 11.sp)
                 }
-            }
 
-            Column(
-                modifier = Modifier.weight(1f).fillMaxHeight(),
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Spacer(Modifier.height(18.dp))
+                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                     Column(Modifier.weight(1f)) {
-                        Text(stringResource(R.string.tuning_history), color = Burgundy, fontWeight = FontWeight.SemiBold, fontSize = 18.sp)
+                        Text(stringResource(R.string.tuning_history), color = Burgundy, fontWeight = FontWeight.SemiBold, fontSize = 17.sp)
                         Text(stringResource(R.string.tuning_deviation), color = MutedInk, fontSize = 11.sp)
                     }
                     TextButton(onClick = { history.clear() }) {
@@ -346,14 +452,14 @@ private fun TunerPanel(
                         Text(stringResource(R.string.clear), color = Burgundy, fontSize = 12.sp)
                     }
                 }
-                PitchHistoryChart(history, Modifier.fillMaxWidth().weight(1f))
-                Spacer(Modifier.height(10.dp))
-
+                PitchHistoryChart(history, Modifier.fillMaxWidth().height(150.dp))
+                Spacer(Modifier.height(8.dp))
                 Text(
                     stringResource(R.string.tuner_reference, referenceA.roundToInt()),
+                    modifier = Modifier.fillMaxWidth(),
                     color = Burgundy,
                     fontWeight = FontWeight.SemiBold,
-                    fontSize = 16.sp,
+                    fontSize = 15.sp,
                 )
                 Slider(
                     value = referenceA.toFloat(),
@@ -364,22 +470,103 @@ private fun TunerPanel(
                 )
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                     Text("430", color = MutedInk, fontSize = 11.sp)
-                    TextButton(onClick = {
-                        referenceA = 442.0
-                        onReferenceChange(442)
-                    }) {
+                    TextButton(onClick = { referenceA = 442.0; onReferenceChange(442) }) {
                         Text(stringResource(R.string.reset_442), color = Navy, fontSize = 12.sp)
                     }
                     Text("450", color = MutedInk, fontSize = 11.sp)
                 }
-                Text(
-                    stringResource(R.string.tuner_privacy),
-                    color = MutedInk,
-                    fontSize = 11.sp,
-                )
+                Text(stringResource(R.string.tuner_privacy), color = MutedInk, fontSize = 11.sp)
+                Spacer(Modifier.height(8.dp))
+            }
+        } else {
+            Row(
+                Modifier.fillMaxSize().padding(horizontal = 22.dp, vertical = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(22.dp),
+            ) {
+                Column(
+                    modifier = Modifier.weight(1.16f).fillMaxHeight(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Text(reading?.noteName ?: "—", fontSize = 58.sp, color = Navy, fontWeight = FontWeight.Bold)
+                    Text(
+                        reading?.let { "%.2f Hz".format(it.frequencyHz) } ?: stringResource(R.string.listening),
+                        fontSize = 16.sp,
+                        color = MutedInk,
+                    )
+                    TunerGauge(reading, Modifier.fillMaxWidth().weight(1f))
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                    ) {
+                        listOf("−50", "−25", "0", "+25", "+50").forEach {
+                            Text(it, color = if (it == "0") HeritageGreen else MutedInk, fontSize = 12.sp)
+                        }
+                    }
+                    reading?.let {
+                        val prefix = if (it.cents > 0) "+" else ""
+                        Text(
+                            "$prefix${it.cents.roundToInt()} cents · ${if (it.stable) stringResource(R.string.tuner_status_in_tune) else if (it.cents < 0) stringResource(R.string.tuner_status_low) else stringResource(R.string.tuner_status_high)}",
+                            color = if (it.stable) HeritageGreen else Burgundy,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp,
+                        )
+                    } ?: Text(stringResource(R.string.in_tune_zone), color = HeritageGreen, fontSize = 13.sp)
+                    Spacer(Modifier.height(8.dp))
+                    Button(
+                        onClick = {
+                            if (!hasPermission) permissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+                            else running = !running
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = if (running) Burgundy else HeritageGreen,
+                            contentColor = Color.White,
+                        ),
+                        shape = RoundedCornerShape(14.dp),
+                    ) {
+                        Icon(if (running) Icons.Default.Stop else Icons.Default.Mic, contentDescription = null)
+                        Spacer(Modifier.width(8.dp))
+                        Text(if (running) stringResource(R.string.stop) else stringResource(R.string.start))
+                    }
+                    if (!hasPermission) {
+                        Spacer(Modifier.height(5.dp))
+                        Text(stringResource(R.string.tuner_permission), color = MutedInk, fontSize = 12.sp)
+                    }
+                }
+                Column(modifier = Modifier.weight(1f).fillMaxHeight()) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Column(Modifier.weight(1f)) {
+                            Text(stringResource(R.string.tuning_history), color = Burgundy, fontWeight = FontWeight.SemiBold, fontSize = 18.sp)
+                            Text(stringResource(R.string.tuning_deviation), color = MutedInk, fontSize = 11.sp)
+                        }
+                        TextButton(onClick = { history.clear() }) {
+                            Icon(Icons.Default.DeleteSweep, contentDescription = null, tint = Burgundy, modifier = Modifier.size(18.dp))
+                            Spacer(Modifier.width(4.dp))
+                            Text(stringResource(R.string.clear), color = Burgundy, fontSize = 12.sp)
+                        }
+                    }
+                    PitchHistoryChart(history, Modifier.fillMaxWidth().weight(1f))
+                    Spacer(Modifier.height(10.dp))
+                    Text(stringResource(R.string.tuner_reference, referenceA.roundToInt()), color = Burgundy, fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
+                    Slider(
+                        value = referenceA.toFloat(),
+                        onValueChange = { referenceA = it.roundToInt().toDouble() },
+                        onValueChangeFinished = { onReferenceChange(referenceA.roundToInt()) },
+                        valueRange = 430f..450f,
+                        steps = 19,
+                    )
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                        Text("430", color = MutedInk, fontSize = 11.sp)
+                        TextButton(onClick = { referenceA = 442.0; onReferenceChange(442) }) {
+                            Text(stringResource(R.string.reset_442), color = Navy, fontSize = 12.sp)
+                        }
+                        Text("450", color = MutedInk, fontSize = 11.sp)
+                    }
+                    Text(stringResource(R.string.tuner_privacy), color = MutedInk, fontSize = 11.sp)
+                }
             }
         }
     }
+
 }
 
 @Composable
@@ -546,8 +733,6 @@ private fun MetronomePanel() {
             MetronomeSignature("2/4", mainBeats = 2),
             MetronomeSignature("3/4", mainBeats = 3),
             MetronomeSignature("4/4", mainBeats = 4),
-            MetronomeSignature("2/2", mainBeats = 2),
-            MetronomeSignature("3/8", mainBeats = 3),
             MetronomeSignature("6/8", mainBeats = 2, subdivisionsPerBeat = 3),
             MetronomeSignature("9/8", mainBeats = 3, subdivisionsPerBeat = 3),
             MetronomeSignature("12/8", mainBeats = 4, subdivisionsPerBeat = 3),
@@ -572,40 +757,44 @@ private fun MetronomePanel() {
         onDispose { engine.stop() }
     }
 
+    val compact = LocalAdaptiveWindowSize.current == AdaptiveWindowSize.COMPACT
+
     FestivePanel(
         modifier = Modifier.fillMaxSize(),
         cornerRadius = 22.dp,
         backgroundColor = ParchmentCard,
     ) {
-        Row(Modifier.fillMaxSize().padding(30.dp), horizontalArrangement = Arrangement.spacedBy(30.dp)) {
+        if (compact) {
             Column(
-                Modifier.weight(1f),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 14.dp, vertical = 12.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
             ) {
                 Box(
                     modifier = Modifier
-                        .size(220.dp)
+                        .size(164.dp)
                         .background(Navy.copy(alpha = 0.07f), CircleShape)
                         .border(2.dp, AgedGold.copy(alpha = 0.85f), CircleShape),
                     contentAlignment = Alignment.Center,
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(Icons.Default.MusicNote, contentDescription = null, tint = Burgundy, modifier = Modifier.size(44.dp))
-                        Text("$bpm", fontSize = 62.sp, color = Navy, fontWeight = FontWeight.Bold)
-                        Text("BPM · ${signature.label}", color = MutedInk)
+                        Icon(Icons.Default.MusicNote, contentDescription = null, tint = Burgundy, modifier = Modifier.size(34.dp))
+                        Text("$bpm", fontSize = 46.sp, color = Navy, fontWeight = FontWeight.Bold)
+                        Text("BPM · ${signature.label}", color = MutedInk, fontSize = 12.sp)
                         if (running) {
-                            Spacer(Modifier.height(8.dp))
-                            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                            Spacer(Modifier.height(6.dp))
+                            Row(horizontalArrangement = Arrangement.spacedBy(3.dp)) {
                                 repeat(signature.eventsPerBar) { index ->
                                     val groupStart = signature.isGroupStart(index)
                                     Box(
                                         Modifier
                                             .size(
                                                 when {
-                                                    index == eventIndex -> 12.dp
-                                                    groupStart -> 9.dp
-                                                    else -> 7.dp
+                                                    index == eventIndex -> 10.dp
+                                                    groupStart -> 8.dp
+                                                    else -> 6.dp
                                                 }
                                             )
                                             .background(
@@ -622,7 +811,7 @@ private fun MetronomePanel() {
                         }
                     }
                 }
-                Spacer(Modifier.height(18.dp))
+                Spacer(Modifier.height(10.dp))
                 FestiveButton(
                     onClick = {
                         if (!running) engineBpm = bpm
@@ -631,15 +820,21 @@ private fun MetronomePanel() {
                     backgroundColor = if (running) Burgundy else HeritageGreen,
                     contentColor = Color.White,
                     cornerRadius = 14.dp,
+                    verticalPadding = 9.dp,
                 ) {
                     Icon(if (running) Icons.Default.Stop else Icons.Default.PlayArrow, contentDescription = null, tint = Color.White)
                     Spacer(Modifier.width(8.dp))
                     Text(if (running) stringResource(R.string.stop) else stringResource(R.string.metronome_start), color = Color.White)
                 }
-            }
 
-            Column(Modifier.weight(1f), verticalArrangement = Arrangement.Center) {
-                Text(stringResource(R.string.tempo), color = Burgundy, fontWeight = FontWeight.SemiBold, fontSize = 18.sp)
+                Spacer(Modifier.height(14.dp))
+                Text(
+                    stringResource(R.string.tempo),
+                    modifier = Modifier.fillMaxWidth(),
+                    color = Burgundy,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 17.sp,
+                )
                 Slider(
                     value = bpm.toFloat(),
                     onValueChange = { bpm = it.roundToInt() },
@@ -665,20 +860,23 @@ private fun MetronomePanel() {
                         horizontalPadding = 20.dp,
                     ) { Text("+", color = Navy, fontSize = 20.sp, fontWeight = FontWeight.Bold) }
                 }
-                Spacer(Modifier.height(18.dp))
-                Text(stringResource(R.string.time_signature), color = Burgundy, fontWeight = FontWeight.SemiBold, fontSize = 18.sp)
+                Spacer(Modifier.height(14.dp))
+                Text(
+                    stringResource(R.string.time_signature),
+                    modifier = Modifier.fillMaxWidth(),
+                    color = Burgundy,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 17.sp,
+                )
                 Spacer(Modifier.height(7.dp))
-                signatures.chunked(4).forEachIndexed { rowIndex, rowSignatures ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
+                signatures.chunked(3).forEach { rowSignatures ->
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(7.dp)) {
                         rowSignatures.forEach { item ->
                             val index = signatures.indexOf(item)
                             FestiveChoice(
                                 selected = signatureIndex == index,
                                 onClick = { signatureIndex = index },
-                                modifier = Modifier.weight(1f),
+                                modifier = Modifier.weight(1f).height(52.dp),
                                 selectedColor = MutedGold,
                                 contentColor = Navy,
                             ) {
@@ -686,21 +884,144 @@ private fun MetronomePanel() {
                                     item.label,
                                     color = if (signatureIndex == index) Color.White else Navy,
                                     fontWeight = FontWeight.SemiBold,
+                                    fontSize = 12.sp,
                                 )
                             }
                         }
                     }
-                    if (rowIndex == 0) Spacer(Modifier.height(8.dp))
+                    Spacer(Modifier.height(7.dp))
                 }
-                Spacer(Modifier.height(12.dp))
                 Text(
                     if (signature.isCompound) stringResource(R.string.metronome_compound_desc) else stringResource(R.string.metronome_sound_desc),
                     color = MutedInk,
-                    fontSize = 12.sp,
+                    fontSize = 11.sp,
                 )
+                Spacer(Modifier.height(8.dp))
+            }
+        } else {
+            Row(Modifier.fillMaxSize().padding(30.dp), horizontalArrangement = Arrangement.spacedBy(30.dp)) {
+                Column(
+                    Modifier.weight(1f),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(220.dp)
+                            .background(Navy.copy(alpha = 0.07f), CircleShape)
+                            .border(2.dp, AgedGold.copy(alpha = 0.85f), CircleShape),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Icon(Icons.Default.MusicNote, contentDescription = null, tint = Burgundy, modifier = Modifier.size(44.dp))
+                            Text("$bpm", fontSize = 62.sp, color = Navy, fontWeight = FontWeight.Bold)
+                            Text("BPM · ${signature.label}", color = MutedInk)
+                            if (running) {
+                                Spacer(Modifier.height(8.dp))
+                                Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                                    repeat(signature.eventsPerBar) { index ->
+                                        val groupStart = signature.isGroupStart(index)
+                                        Box(
+                                            Modifier
+                                                .size(
+                                                    when {
+                                                        index == eventIndex -> 12.dp
+                                                        groupStart -> 9.dp
+                                                        else -> 7.dp
+                                                    }
+                                                )
+                                                .background(
+                                                    when {
+                                                        index == eventIndex -> Burgundy
+                                                        groupStart -> MutedGold.copy(alpha = 0.62f)
+                                                        else -> AgedGold.copy(alpha = 0.30f)
+                                                    },
+                                                    CircleShape,
+                                                )
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    Spacer(Modifier.height(18.dp))
+                    FestiveButton(
+                        onClick = {
+                            if (!running) engineBpm = bpm
+                            running = !running
+                        },
+                        backgroundColor = if (running) Burgundy else HeritageGreen,
+                        contentColor = Color.White,
+                        cornerRadius = 14.dp,
+                    ) {
+                        Icon(if (running) Icons.Default.Stop else Icons.Default.PlayArrow, contentDescription = null, tint = Color.White)
+                        Spacer(Modifier.width(8.dp))
+                        Text(if (running) stringResource(R.string.stop) else stringResource(R.string.metronome_start), color = Color.White)
+                    }
+                }
+
+                Column(Modifier.weight(1f), verticalArrangement = Arrangement.Center) {
+                    Text(stringResource(R.string.tempo), color = Burgundy, fontWeight = FontWeight.SemiBold, fontSize = 18.sp)
+                    Slider(
+                        value = bpm.toFloat(),
+                        onValueChange = { bpm = it.roundToInt() },
+                        onValueChangeFinished = { engineBpm = bpm },
+                        valueRange = 40f..240f,
+                        colors = androidx.compose.material.SliderDefaults.colors(
+                            thumbColor = Burgundy,
+                            activeTrackColor = Burgundy,
+                            inactiveTrackColor = AgedGold.copy(alpha = 0.35f),
+                        ),
+                    )
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                        FestiveButton(
+                            onClick = { bpm = (bpm - 1).coerceAtLeast(40); engineBpm = bpm },
+                            backgroundColor = ParchmentCard,
+                            contentColor = Navy,
+                            horizontalPadding = 20.dp,
+                        ) { Text("−", color = Navy, fontSize = 20.sp, fontWeight = FontWeight.Bold) }
+                        FestiveButton(
+                            onClick = { bpm = (bpm + 1).coerceAtMost(240); engineBpm = bpm },
+                            backgroundColor = ParchmentCard,
+                            contentColor = Navy,
+                            horizontalPadding = 20.dp,
+                        ) { Text("+", color = Navy, fontSize = 20.sp, fontWeight = FontWeight.Bold) }
+                    }
+                    Spacer(Modifier.height(18.dp))
+                    Text(stringResource(R.string.time_signature), color = Burgundy, fontWeight = FontWeight.SemiBold, fontSize = 18.sp)
+                    Spacer(Modifier.height(7.dp))
+                    signatures.chunked(3).forEachIndexed { rowIndex, rowSignatures ->
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            rowSignatures.forEach { item ->
+                                val index = signatures.indexOf(item)
+                                FestiveChoice(
+                                    selected = signatureIndex == index,
+                                    onClick = { signatureIndex = index },
+                                    modifier = Modifier.weight(1f).height(52.dp),
+                                    selectedColor = MutedGold,
+                                    contentColor = Navy,
+                                ) {
+                                    Text(
+                                        item.label,
+                                        color = if (signatureIndex == index) Color.White else Navy,
+                                        fontWeight = FontWeight.SemiBold,
+                                    )
+                                }
+                            }
+                        }
+                        if (rowIndex == 0) Spacer(Modifier.height(8.dp))
+                    }
+                    Spacer(Modifier.height(12.dp))
+                    Text(
+                        if (signature.isCompound) stringResource(R.string.metronome_compound_desc) else stringResource(R.string.metronome_sound_desc),
+                        color = MutedInk,
+                        fontSize = 12.sp,
+                    )
+                }
             }
         }
     }
+
 }
 
 @Composable
@@ -724,65 +1045,51 @@ private fun ReferenceTonePanel(referenceAHz: Int) {
         onDispose { engine.stop() }
     }
 
+    val compact = LocalAdaptiveWindowSize.current == AdaptiveWindowSize.COMPACT
+
     FestivePanel(
         modifier = Modifier.fillMaxSize(),
         cornerRadius = 22.dp,
         backgroundColor = ParchmentCard,
     ) {
-        Row(
-            Modifier.fillMaxSize().padding(horizontal = 28.dp, vertical = 22.dp),
-            horizontalArrangement = Arrangement.spacedBy(30.dp),
-        ) {
+        if (compact) {
             Column(
-                modifier = Modifier.weight(0.95f).fillMaxHeight(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 14.dp, vertical = 12.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
             ) {
-                Icon(Icons.Default.MusicNote, contentDescription = null, tint = Burgundy, modifier = Modifier.size(50.dp))
-                Spacer(Modifier.height(6.dp))
-                Text(
-                    "${noteNames[pitchClass]}$octave",
-                    fontSize = 54.sp,
-                    color = Navy,
-                    fontWeight = FontWeight.Bold,
-                )
-                Text("%.2f Hz".format(frequency), color = MutedInk, fontSize = 18.sp)
-                Spacer(Modifier.height(16.dp))
+                Icon(Icons.Default.MusicNote, contentDescription = null, tint = Burgundy, modifier = Modifier.size(38.dp))
+                Text("${noteNames[pitchClass]}$octave", fontSize = 40.sp, color = Navy, fontWeight = FontWeight.Bold)
+                Text("%.2f Hz".format(frequency), color = MutedInk, fontSize = 15.sp)
+                Spacer(Modifier.height(10.dp))
                 FestiveButton(
                     onClick = { running = !running },
                     backgroundColor = if (running) Burgundy else HeritageGreen,
                     contentColor = Color.White,
                     cornerRadius = 14.dp,
+                    verticalPadding = 9.dp,
                 ) {
                     Icon(if (running) Icons.Default.Stop else Icons.Default.PlayArrow, contentDescription = null, tint = Color.White)
                     Spacer(Modifier.width(8.dp))
                     Text(if (running) stringResource(R.string.stop_note) else stringResource(R.string.play), color = Color.White)
                 }
-                Spacer(Modifier.height(14.dp))
-                Text(
-                    stringResource(R.string.tuning_reference_a4, referenceAHz),
-                    color = MutedInk,
-                    fontSize = 12.sp,
-                )
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    stringResource(R.string.reference_tone_desc),
-                    color = MutedInk,
-                    fontSize = 11.sp,
-                )
-            }
-
-            Column(
-                modifier = Modifier.weight(1.45f).fillMaxHeight(),
-                verticalArrangement = Arrangement.Center,
-            ) {
-                Text(stringResource(R.string.note), color = Burgundy, fontWeight = FontWeight.SemiBold, fontSize = 18.sp)
                 Spacer(Modifier.height(8.dp))
-                noteNames.chunked(4).forEach { rowNotes ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
+                Text(stringResource(R.string.tuning_reference_a4, referenceAHz), color = MutedInk, fontSize = 11.sp)
+                Text(stringResource(R.string.reference_tone_desc), color = MutedInk, fontSize = 10.sp)
+
+                Spacer(Modifier.height(16.dp))
+                Text(
+                    stringResource(R.string.note),
+                    modifier = Modifier.fillMaxWidth(),
+                    color = Burgundy,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 17.sp,
+                )
+                Spacer(Modifier.height(7.dp))
+                noteNames.chunked(3).forEach { rowNotes ->
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(7.dp)) {
                         rowNotes.forEach { name ->
                             val index = noteNames.indexOf(name)
                             FestiveChoice(
@@ -795,40 +1102,49 @@ private fun ReferenceTonePanel(referenceAHz: Int) {
                                 Text(
                                     name,
                                     color = if (pitchClass == index) Color.White else Navy,
-                                    fontSize = 12.sp,
+                                    fontSize = 11.sp,
                                     fontWeight = FontWeight.SemiBold,
                                     maxLines = 1,
                                 )
                             }
                         }
                     }
-                    Spacer(Modifier.height(8.dp))
+                    Spacer(Modifier.height(7.dp))
                 }
 
-                Spacer(Modifier.height(8.dp))
-                Text(stringResource(R.string.octave), color = Burgundy, fontWeight = FontWeight.SemiBold, fontSize = 18.sp)
+                Spacer(Modifier.height(6.dp))
+                Text(
+                    stringResource(R.string.octave),
+                    modifier = Modifier.fillMaxWidth(),
+                    color = Burgundy,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 17.sp,
+                )
                 Spacer(Modifier.height(7.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(7.dp)) {
                     (2..6).forEach { value ->
                         FestiveChoice(
                             selected = octave == value,
                             onClick = { octave = value },
+                            modifier = Modifier.weight(1f),
                             selectedColor = MutedGold,
                             contentColor = Navy,
                         ) {
-                            Text(
-                                value.toString(),
-                                color = if (octave == value) Color.White else Navy,
-                                fontWeight = FontWeight.SemiBold,
-                            )
+                            Text(value.toString(), color = if (octave == value) Color.White else Navy, fontWeight = FontWeight.SemiBold)
                         }
                     }
                 }
 
-                Spacer(Modifier.height(18.dp))
-                Text(stringResource(R.string.quick_access), color = Burgundy, fontWeight = FontWeight.SemiBold, fontSize = 18.sp)
+                Spacer(Modifier.height(14.dp))
+                Text(
+                    stringResource(R.string.quick_access),
+                    modifier = Modifier.fillMaxWidth(),
+                    color = Burgundy,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 17.sp,
+                )
                 Spacer(Modifier.height(7.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     listOf(
                         Triple("La4", 9, 4),
                         Triple("Sib3", 10, 3),
@@ -836,16 +1152,115 @@ private fun ReferenceTonePanel(referenceAHz: Int) {
                     ).forEach { (label, note, oct) ->
                         FestiveButton(
                             onClick = { pitchClass = note; octave = oct },
+                            modifier = Modifier.weight(1f),
                             backgroundColor = ParchmentCard,
                             contentColor = Navy,
-                            horizontalPadding = 16.dp,
+                            horizontalPadding = 10.dp,
                         ) {
-                            Text(label, color = Navy, fontWeight = FontWeight.SemiBold)
+                            Text(label, color = Navy, fontWeight = FontWeight.SemiBold, fontSize = 12.sp)
+                        }
+                    }
+                }
+                Spacer(Modifier.height(8.dp))
+            }
+        } else {
+            Row(
+                Modifier.fillMaxSize().padding(horizontal = 28.dp, vertical = 22.dp),
+                horizontalArrangement = Arrangement.spacedBy(30.dp),
+            ) {
+                Column(
+                    modifier = Modifier.weight(0.95f).fillMaxHeight(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                ) {
+                    Icon(Icons.Default.MusicNote, contentDescription = null, tint = Burgundy, modifier = Modifier.size(50.dp))
+                    Spacer(Modifier.height(6.dp))
+                    Text("${noteNames[pitchClass]}$octave", fontSize = 54.sp, color = Navy, fontWeight = FontWeight.Bold)
+                    Text("%.2f Hz".format(frequency), color = MutedInk, fontSize = 18.sp)
+                    Spacer(Modifier.height(16.dp))
+                    FestiveButton(
+                        onClick = { running = !running },
+                        backgroundColor = if (running) Burgundy else HeritageGreen,
+                        contentColor = Color.White,
+                        cornerRadius = 14.dp,
+                    ) {
+                        Icon(if (running) Icons.Default.Stop else Icons.Default.PlayArrow, contentDescription = null, tint = Color.White)
+                        Spacer(Modifier.width(8.dp))
+                        Text(if (running) stringResource(R.string.stop_note) else stringResource(R.string.play), color = Color.White)
+                    }
+                    Spacer(Modifier.height(14.dp))
+                    Text(stringResource(R.string.tuning_reference_a4, referenceAHz), color = MutedInk, fontSize = 12.sp)
+                    Spacer(Modifier.height(4.dp))
+                    Text(stringResource(R.string.reference_tone_desc), color = MutedInk, fontSize = 11.sp)
+                }
+
+                Column(
+                    modifier = Modifier.weight(1.45f).fillMaxHeight(),
+                    verticalArrangement = Arrangement.Center,
+                ) {
+                    Text(stringResource(R.string.note), color = Burgundy, fontWeight = FontWeight.SemiBold, fontSize = 18.sp)
+                    Spacer(Modifier.height(8.dp))
+                    noteNames.chunked(4).forEach { rowNotes ->
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            rowNotes.forEach { name ->
+                                val index = noteNames.indexOf(name)
+                                FestiveChoice(
+                                    selected = pitchClass == index,
+                                    onClick = { pitchClass = index },
+                                    modifier = Modifier.weight(1f),
+                                    selectedColor = Burgundy,
+                                    contentColor = Navy,
+                                ) {
+                                    Text(
+                                        name,
+                                        color = if (pitchClass == index) Color.White else Navy,
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        maxLines = 1,
+                                    )
+                                }
+                            }
+                        }
+                        Spacer(Modifier.height(8.dp))
+                    }
+                    Spacer(Modifier.height(8.dp))
+                    Text(stringResource(R.string.octave), color = Burgundy, fontWeight = FontWeight.SemiBold, fontSize = 18.sp)
+                    Spacer(Modifier.height(7.dp))
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        (2..6).forEach { value ->
+                            FestiveChoice(
+                                selected = octave == value,
+                                onClick = { octave = value },
+                                selectedColor = MutedGold,
+                                contentColor = Navy,
+                            ) {
+                                Text(value.toString(), color = if (octave == value) Color.White else Navy, fontWeight = FontWeight.SemiBold)
+                            }
+                        }
+                    }
+                    Spacer(Modifier.height(18.dp))
+                    Text(stringResource(R.string.quick_access), color = Burgundy, fontWeight = FontWeight.SemiBold, fontSize = 18.sp)
+                    Spacer(Modifier.height(7.dp))
+                    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        listOf(
+                            Triple("La4", 9, 4),
+                            Triple("Sib3", 10, 3),
+                            Triple("Sib4", 10, 4),
+                        ).forEach { (label, note, oct) ->
+                            FestiveButton(
+                                onClick = { pitchClass = note; octave = oct },
+                                backgroundColor = ParchmentCard,
+                                contentColor = Navy,
+                                horizontalPadding = 16.dp,
+                            ) {
+                                Text(label, color = Navy, fontWeight = FontWeight.SemiBold)
+                            }
                         }
                     }
                 }
             }
         }
     }
+
 }
 

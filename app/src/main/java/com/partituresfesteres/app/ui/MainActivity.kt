@@ -20,20 +20,33 @@ class MainActivity : ComponentActivity() {
     }
 
     private var incomingPdfUri by mutableStateOf<Uri?>(null)
+    private var resumeRevision by mutableStateOf(0)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+        requestedOrientation = if (resources.configuration.smallestScreenWidthDp >= 600) {
+            ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+        } else {
+            ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
+        }
         incomingPdfUri = extractPdfUri(intent)
 
         setContent {
             PartituresFesteresTheme {
-                PartituresFesteresApp(
-                    incomingPdfUri = incomingPdfUri,
-                    onIncomingPdfConsumed = { incomingPdfUri = null },
-                )
+                AdaptiveWindowProvider {
+                    PartituresFesteresApp(
+                        incomingPdfUri = incomingPdfUri,
+                        onIncomingPdfConsumed = { incomingPdfUri = null },
+                        refreshToken = resumeRevision,
+                    )
+                }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        resumeRevision += 1
     }
 
     override fun onNewIntent(intent: Intent) {

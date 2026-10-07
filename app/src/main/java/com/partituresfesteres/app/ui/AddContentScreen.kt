@@ -15,6 +15,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -245,198 +247,285 @@ fun AddContentScreen(
         }
     }
 
-    Row(Modifier.fillMaxSize()) {
-        Sidebar(
-            activeSection = AppSection.ADD_CONTENT,
-            onLibraryClick = onLibraryClick,
-            onRepertoiresClick = onRepertoiresClick,
-            onRecentsClick = onRecentsClick,
-            onFavoritesClick = onFavoritesClick,
-            onAddContentClick = {},
-            onToolsClick = onToolsClick,
-        )
-
+    AdaptiveNavigationScaffold(
+        activeSection = AppSection.ADD_CONTENT,
+        onLibraryClick = onLibraryClick,
+        onRepertoiresClick = onRepertoiresClick,
+        onRecentsClick = onRecentsClick,
+        onFavoritesClick = onFavoritesClick,
+        onToolsClick = onToolsClick,
+        onAddContentClick = {},
+    ) {
+        val compact = LocalAdaptiveWindowSize.current == AdaptiveWindowSize.COMPACT
         Column(
             modifier = Modifier
-                .weight(1f)
-                .fillMaxHeight()
-                .padding(start = 26.dp, end = 38.dp, top = 16.dp, bottom = 22.dp),
+                .fillMaxSize()
+                .padding(
+                    start = if (compact) 10.dp else 26.dp,
+                    end = if (compact) 10.dp else 38.dp,
+                    top = if (compact) 6.dp else 16.dp,
+                    bottom = if (compact) 6.dp else 22.dp,
+                ),
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                CimoPlaceholder()
-                Spacer(Modifier.width(12.dp))
+                CimoPlaceholder(size = if (compact) 40.dp else 64.dp)
+                Spacer(Modifier.width(if (compact) 7.dp else 12.dp))
                 Column {
-                    AppTitle()
-                    Text(stringResource(R.string.add_title), fontSize = 25.sp, color = Burgundy, fontWeight = FontWeight.SemiBold)
+                    AppTitle(fontSize = if (compact) 24.sp else 34.sp)
+                    Text(stringResource(R.string.add_title), fontSize = if (compact) 18.sp else 25.sp, color = Burgundy, fontWeight = FontWeight.SemiBold)
                 }
             }
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(if (compact) 6.dp else 12.dp))
 
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(if (compact) 7.dp else 12.dp)) {
                 FestiveButton(
                     onClick = ::startScanner,
                     backgroundColor = Burgundy,
                     contentColor = Color.White,
                     cornerRadius = 14.dp,
-                    horizontalPadding = 20.dp,
-                    verticalPadding = 12.dp,
+                    horizontalPadding = if (compact) 12.dp else 20.dp,
+                    verticalPadding = if (compact) 9.dp else 12.dp,
                 ) {
-                    Icon(Icons.Default.CameraAlt, contentDescription = null, tint = Color.White)
-                    Spacer(Modifier.width(8.dp))
-                    Text(stringResource(R.string.scan_score), color = Color.White)
+                    Icon(Icons.Default.CameraAlt, contentDescription = null, tint = Color.White, modifier = Modifier.size(if (compact) 19.dp else 24.dp))
+                    Spacer(Modifier.width(6.dp))
+                    Text(stringResource(R.string.scan_score), color = Color.White, fontSize = if (compact) 12.sp else 14.sp)
                 }
                 FestiveButton(
                     onClick = { importLauncher.launch(arrayOf("application/pdf")) },
                     backgroundColor = ParchmentCard,
                     contentColor = Burgundy,
                     cornerRadius = 14.dp,
-                    horizontalPadding = 20.dp,
-                    verticalPadding = 12.dp,
+                    horizontalPadding = if (compact) 12.dp else 20.dp,
+                    verticalPadding = if (compact) 9.dp else 12.dp,
                 ) {
-                    Icon(Icons.Default.PictureAsPdf, contentDescription = null, tint = Burgundy)
-                    Spacer(Modifier.width(8.dp))
-                    Text(stringResource(R.string.import_pdf), color = Burgundy)
+                    Icon(Icons.Default.PictureAsPdf, contentDescription = null, tint = Burgundy, modifier = Modifier.size(if (compact) 19.dp else 24.dp))
+                    Spacer(Modifier.width(6.dp))
+                    Text(stringResource(R.string.import_pdf), color = Burgundy, fontSize = if (compact) 12.sp else 14.sp)
                 }
             }
 
-            Spacer(Modifier.height(12.dp))
-            Row(
-                modifier = Modifier.fillMaxSize(),
-                horizontalArrangement = Arrangement.spacedBy(14.dp),
-            ) {
-                FestivePanel(
-                    modifier = Modifier.weight(0.56f).fillMaxHeight(),
-                    cornerRadius = 20.dp,
-                    backgroundColor = ParchmentCard,
+            Spacer(Modifier.height(if (compact) 7.dp else 12.dp))
+
+            if (compact) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(9.dp),
                 ) {
-                    Column(Modifier.fillMaxSize().padding(18.dp)) {
-                        Text(
-                            if (source == AddSource.IMPORT) stringResource(R.string.selected_pdf) else stringResource(R.string.captured_pages),
-                            color = Burgundy,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.SemiBold,
-                        )
-                        Spacer(Modifier.height(12.dp))
-                        when {
-                            sourceUri == null -> EmptySourcePanel(onScan = ::startScanner, onImport = { importLauncher.launch(arrayOf("application/pdf")) })
-                            source == AddSource.SCAN && scanPageUris.isNotEmpty() -> {
-                                Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                                    scanPageUris.take(3).forEachIndexed { index, uri ->
-                                        ScanImagePreview(uri = uri, label = stringResource(R.string.page_number, index + 1), modifier = Modifier.weight(1f))
+                    FestivePanel(
+                        modifier = Modifier.fillMaxWidth().height(230.dp),
+                        cornerRadius = 18.dp,
+                        backgroundColor = ParchmentCard,
+                    ) {
+                        Column(Modifier.fillMaxSize().padding(12.dp)) {
+                            Text(
+                                if (source == AddSource.IMPORT) stringResource(R.string.selected_pdf) else stringResource(R.string.captured_pages),
+                                color = Burgundy,
+                                fontSize = 17.sp,
+                                fontWeight = FontWeight.SemiBold,
+                            )
+                            Spacer(Modifier.height(8.dp))
+                            when {
+                                sourceUri == null -> EmptySourcePanel(onScan = ::startScanner, onImport = { importLauncher.launch(arrayOf("application/pdf")) })
+                                source == AddSource.SCAN && scanPageUris.isNotEmpty() -> {
+                                    Row(horizontalArrangement = Arrangement.spacedBy(7.dp)) {
+                                        scanPageUris.take(3).forEachIndexed { index, uri ->
+                                            ScanImagePreview(uri = uri, label = stringResource(R.string.page_number, index + 1), modifier = Modifier.weight(1f))
+                                        }
+                                    }
+                                    if (scanPageUris.size > 3) {
+                                        Spacer(Modifier.height(5.dp))
+                                        Text(stringResource(R.string.more_pages, scanPageUris.size - 3), color = MutedInk, fontSize = 11.sp)
                                     }
                                 }
-                                if (scanPageUris.size > 3) {
-                                    Spacer(Modifier.height(8.dp))
-                                    Text(stringResource(R.string.more_pages, scanPageUris.size - 3), color = MutedInk, fontSize = 13.sp)
-                                }
-                                Spacer(Modifier.height(14.dp))
-                                FestiveButton(
-                                    onClick = ::startScanner,
-                                    backgroundColor = ParchmentCard,
-                                    contentColor = Burgundy,
-                                ) {
-                                    Icon(Icons.Default.CameraAlt, contentDescription = null, tint = Burgundy)
-                                    Spacer(Modifier.width(7.dp))
-                                    Text(stringResource(R.string.scan_again), color = Burgundy)
-                                }
-                            }
-                            else -> {
-                                val uri = sourceUri!!
-                                ImportedPdfPreview(uri = uri, thumbnailRepository = thumbnailRepository)
+                                else -> ImportedPdfPreview(uri = sourceUri!!, thumbnailRepository = thumbnailRepository)
                             }
                         }
                     }
-                }
 
-                FestivePanel(
-                    modifier = Modifier.weight(0.44f).fillMaxHeight(),
-                    cornerRadius = 20.dp,
-                    backgroundColor = ParchmentCard,
-                ) {
-                    Column(Modifier.fillMaxSize().padding(18.dp)) {
-                        Text(stringResource(R.string.score_data), color = Burgundy, fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
-                        Spacer(Modifier.height(10.dp))
-                        OutlinedTextField(
-                            value = name,
-                            onValueChange = { name = it },
-                            label = { Text(stringResource(R.string.name)) },
-                            singleLine = true,
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = festiveTextFieldColors(),
-                        )
-                        Spacer(Modifier.height(10.dp))
-                        Text(stringResource(R.string.save_in), color = Ink, fontWeight = FontWeight.Medium)
-                        Spacer(Modifier.height(5.dp))
-                        FestiveButton(
-                            onClick = { showFolderDialog = true },
-                            enabled = !loadingFolders,
-                            backgroundColor = ParchmentCard,
-                            contentColor = Navy,
-                            modifier = Modifier.fillMaxWidth(),
-                        ) {
-                            Icon(Icons.Default.Folder, contentDescription = null, tint = Navy)
-                            Spacer(Modifier.width(8.dp))
-                            Text(
-                                selectedFolder.relativePath.ifBlank { rootFolderLabel },
-                                modifier = Modifier.weight(1f),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                color = Navy,
+                    FestivePanel(
+                        modifier = Modifier.fillMaxWidth(),
+                        cornerRadius = 18.dp,
+                        backgroundColor = ParchmentCard,
+                    ) {
+                        Column(Modifier.fillMaxWidth().padding(13.dp)) {
+                            Text(stringResource(R.string.score_data), color = Burgundy, fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+                            Spacer(Modifier.height(8.dp))
+                            OutlinedTextField(
+                                value = name,
+                                onValueChange = { name = it },
+                                label = { Text(stringResource(R.string.name)) },
+                                singleLine = true,
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = festiveTextFieldColors(),
                             )
-                            Icon(Icons.Default.KeyboardArrowDown, contentDescription = null, tint = Navy)
-                        }
-
-                        if (repertoires.isNotEmpty()) {
-                            Spacer(Modifier.height(9.dp))
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Checkbox(
-                                    checked = addToRepertoire,
-                                    onCheckedChange = { addToRepertoire = it },
-                                    colors = CheckboxDefaults.colors(checkedColor = Burgundy),
+                            Spacer(Modifier.height(8.dp))
+                            Text(stringResource(R.string.save_in), color = Ink, fontWeight = FontWeight.Medium)
+                            Spacer(Modifier.height(4.dp))
+                            FestiveButton(
+                                onClick = { showFolderDialog = true },
+                                enabled = !loadingFolders,
+                                backgroundColor = ParchmentCard,
+                                contentColor = Navy,
+                                modifier = Modifier.fillMaxWidth(),
+                            ) {
+                                Icon(Icons.Default.Folder, contentDescription = null, tint = Navy)
+                                Spacer(Modifier.width(7.dp))
+                                Text(
+                                    selectedFolder.relativePath.ifBlank { rootFolderLabel },
+                                    modifier = Modifier.weight(1f),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    color = Navy,
                                 )
-                                Text(stringResource(R.string.add_to_repertoire), color = Ink)
+                                Icon(Icons.Default.KeyboardArrowDown, contentDescription = null, tint = Navy)
                             }
-                            if (addToRepertoire) {
-                                FestiveButton(
-                                    onClick = { showRepertoireDialog = true },
-                                    backgroundColor = ParchmentCard,
-                                    contentColor = Navy,
-                                    modifier = Modifier.fillMaxWidth(),
-                                ) {
-                                    Text(
-                                        repertoires.firstOrNull { it.id == selectedRepertoireId }?.name ?: stringResource(R.string.select_repertoire),
-                                        modifier = Modifier.weight(1f),
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis,
-                                        color = Navy,
+                            if (repertoires.isNotEmpty()) {
+                                Spacer(Modifier.height(7.dp))
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Checkbox(
+                                        checked = addToRepertoire,
+                                        onCheckedChange = { addToRepertoire = it },
+                                        colors = CheckboxDefaults.colors(checkedColor = Burgundy),
                                     )
-                                    Icon(Icons.Default.KeyboardArrowDown, contentDescription = null, tint = Navy)
+                                    Text(stringResource(R.string.add_to_repertoire), color = Ink)
+                                }
+                                if (addToRepertoire) {
+                                    FestiveButton(
+                                        onClick = { showRepertoireDialog = true },
+                                        backgroundColor = ParchmentCard,
+                                        contentColor = Navy,
+                                        modifier = Modifier.fillMaxWidth(),
+                                    ) {
+                                        Text(
+                                            repertoires.firstOrNull { it.id == selectedRepertoireId }?.name ?: stringResource(R.string.select_repertoire),
+                                            modifier = Modifier.weight(1f),
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis,
+                                            color = Navy,
+                                        )
+                                        Icon(Icons.Default.KeyboardArrowDown, contentDescription = null, tint = Navy)
+                                    }
+                                }
+                            }
+                            pageCount?.let {
+                                Spacer(Modifier.height(7.dp))
+                                Text(stringResource(R.string.pages_detected, it), color = MutedInk, fontSize = 12.sp)
+                            }
+                            error?.let {
+                                Spacer(Modifier.height(6.dp))
+                                Text(it, color = Burgundy, fontSize = 12.sp)
+                            }
+                            Spacer(Modifier.height(12.dp))
+                            Button(
+                                onClick = { performSave() },
+                                enabled = sourceUri != null && !saving,
+                                colors = ButtonDefaults.buttonColors(backgroundColor = Burgundy, contentColor = Color.White),
+                                modifier = Modifier.fillMaxWidth(),
+                                contentPadding = PaddingValues(vertical = 11.dp),
+                            ) {
+                                if (saving) CircularProgressIndicator(color = Color.White, modifier = Modifier.size(22.dp), strokeWidth = 2.dp)
+                                else {
+                                    Icon(Icons.Default.Save, contentDescription = null)
+                                    Spacer(Modifier.width(8.dp))
+                                    Text(stringResource(R.string.save))
                                 }
                             }
                         }
+                    }
+                    Spacer(Modifier.height(6.dp))
+                }
+            } else {
+                Row(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalArrangement = Arrangement.spacedBy(14.dp),
+                ) {
+                    FestivePanel(
+                        modifier = Modifier.weight(0.56f).fillMaxHeight(),
+                        cornerRadius = 20.dp,
+                        backgroundColor = ParchmentCard,
+                    ) {
+                        Column(Modifier.fillMaxSize().padding(18.dp)) {
+                            Text(
+                                if (source == AddSource.IMPORT) stringResource(R.string.selected_pdf) else stringResource(R.string.captured_pages),
+                                color = Burgundy,
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.SemiBold,
+                            )
+                            Spacer(Modifier.height(12.dp))
+                            when {
+                                sourceUri == null -> EmptySourcePanel(onScan = ::startScanner, onImport = { importLauncher.launch(arrayOf("application/pdf")) })
+                                source == AddSource.SCAN && scanPageUris.isNotEmpty() -> {
+                                    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                                        scanPageUris.take(3).forEachIndexed { index, uri ->
+                                            ScanImagePreview(uri = uri, label = stringResource(R.string.page_number, index + 1), modifier = Modifier.weight(1f))
+                                        }
+                                    }
+                                    if (scanPageUris.size > 3) {
+                                        Spacer(Modifier.height(8.dp))
+                                        Text(stringResource(R.string.more_pages, scanPageUris.size - 3), color = MutedInk, fontSize = 13.sp)
+                                    }
+                                    Spacer(Modifier.height(14.dp))
+                                    FestiveButton(onClick = ::startScanner, backgroundColor = ParchmentCard, contentColor = Burgundy) {
+                                        Icon(Icons.Default.CameraAlt, contentDescription = null, tint = Burgundy)
+                                        Spacer(Modifier.width(7.dp))
+                                        Text(stringResource(R.string.scan_again), color = Burgundy)
+                                    }
+                                }
+                                else -> ImportedPdfPreview(uri = sourceUri!!, thumbnailRepository = thumbnailRepository)
+                            }
+                        }
+                    }
 
-                        Spacer(Modifier.height(9.dp))
-                        pageCount?.let {
-                            Text(stringResource(R.string.pages_detected, it), color = MutedInk, fontSize = 13.sp)
-                        }
-                        error?.let {
-                            Spacer(Modifier.height(7.dp))
-                            Text(it, color = Burgundy, fontSize = 13.sp)
-                        }
-                        Spacer(Modifier.weight(1f))
-                        Button(
-                            onClick = { performSave() },
-                            enabled = sourceUri != null && !saving,
-                            colors = ButtonDefaults.buttonColors(backgroundColor = Burgundy, contentColor = Color.White),
-                            modifier = Modifier.fillMaxWidth(),
-                            contentPadding = PaddingValues(vertical = 12.dp),
-                        ) {
-                            if (saving) {
-                                CircularProgressIndicator(color = Color.White, modifier = Modifier.size(22.dp), strokeWidth = 2.dp)
-                            } else {
-                                Icon(Icons.Default.Save, contentDescription = null)
+                    FestivePanel(
+                        modifier = Modifier.weight(0.44f).fillMaxHeight(),
+                        cornerRadius = 20.dp,
+                        backgroundColor = ParchmentCard,
+                    ) {
+                        Column(Modifier.fillMaxSize().padding(18.dp)) {
+                            Text(stringResource(R.string.score_data), color = Burgundy, fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
+                            Spacer(Modifier.height(10.dp))
+                            OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text(stringResource(R.string.name)) }, singleLine = true, modifier = Modifier.fillMaxWidth(), colors = festiveTextFieldColors())
+                            Spacer(Modifier.height(10.dp))
+                            Text(stringResource(R.string.save_in), color = Ink, fontWeight = FontWeight.Medium)
+                            Spacer(Modifier.height(5.dp))
+                            FestiveButton(onClick = { showFolderDialog = true }, enabled = !loadingFolders, backgroundColor = ParchmentCard, contentColor = Navy, modifier = Modifier.fillMaxWidth()) {
+                                Icon(Icons.Default.Folder, contentDescription = null, tint = Navy)
                                 Spacer(Modifier.width(8.dp))
-                                Text(stringResource(R.string.save))
+                                Text(selectedFolder.relativePath.ifBlank { rootFolderLabel }, modifier = Modifier.weight(1f), maxLines = 1, overflow = TextOverflow.Ellipsis, color = Navy)
+                                Icon(Icons.Default.KeyboardArrowDown, contentDescription = null, tint = Navy)
+                            }
+                            if (repertoires.isNotEmpty()) {
+                                Spacer(Modifier.height(9.dp))
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Checkbox(checked = addToRepertoire, onCheckedChange = { addToRepertoire = it }, colors = CheckboxDefaults.colors(checkedColor = Burgundy))
+                                    Text(stringResource(R.string.add_to_repertoire), color = Ink)
+                                }
+                                if (addToRepertoire) {
+                                    FestiveButton(onClick = { showRepertoireDialog = true }, backgroundColor = ParchmentCard, contentColor = Navy, modifier = Modifier.fillMaxWidth()) {
+                                        Text(repertoires.firstOrNull { it.id == selectedRepertoireId }?.name ?: stringResource(R.string.select_repertoire), modifier = Modifier.weight(1f), maxLines = 1, overflow = TextOverflow.Ellipsis, color = Navy)
+                                        Icon(Icons.Default.KeyboardArrowDown, contentDescription = null, tint = Navy)
+                                    }
+                                }
+                            }
+                            Spacer(Modifier.height(9.dp))
+                            pageCount?.let { Text(stringResource(R.string.pages_detected, it), color = MutedInk, fontSize = 13.sp) }
+                            error?.let { Spacer(Modifier.height(7.dp)); Text(it, color = Burgundy, fontSize = 13.sp) }
+                            Spacer(Modifier.weight(1f))
+                            Button(
+                                onClick = { performSave() },
+                                enabled = sourceUri != null && !saving,
+                                colors = ButtonDefaults.buttonColors(backgroundColor = Burgundy, contentColor = Color.White),
+                                modifier = Modifier.fillMaxWidth(),
+                                contentPadding = PaddingValues(vertical = 12.dp),
+                            ) {
+                                if (saving) CircularProgressIndicator(color = Color.White, modifier = Modifier.size(22.dp), strokeWidth = 2.dp)
+                                else {
+                                    Icon(Icons.Default.Save, contentDescription = null)
+                                    Spacer(Modifier.width(8.dp))
+                                    Text(stringResource(R.string.save))
+                                }
                             }
                         }
                     }

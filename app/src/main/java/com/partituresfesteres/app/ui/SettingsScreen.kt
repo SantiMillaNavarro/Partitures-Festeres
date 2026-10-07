@@ -75,60 +75,67 @@ fun SettingsScreen(
     onToolsClick: () -> Unit,
     onAddContentClick: () -> Unit,
 ) {
-    Row(Modifier.fillMaxSize()) {
-        Sidebar(
-            activeSection = AppSection.SETTINGS,
-            onLibraryClick = onLibraryClick,
-            onRepertoiresClick = onRepertoiresClick,
-            onRecentsClick = onRecentsClick,
-            onFavoritesClick = onFavoritesClick,
-            onAddContentClick = onAddContentClick,
-            onToolsClick = onToolsClick,
-        )
-
+    AdaptiveNavigationScaffold(
+        activeSection = AppSection.SETTINGS,
+        onLibraryClick = onLibraryClick,
+        onRepertoiresClick = onRepertoiresClick,
+        onRecentsClick = onRecentsClick,
+        onFavoritesClick = onFavoritesClick,
+        onToolsClick = onToolsClick,
+        onAddContentClick = onAddContentClick,
+    ) {
+        val compact = LocalAdaptiveWindowSize.current == AdaptiveWindowSize.COMPACT
         Column(
             modifier = Modifier
-                .weight(1f)
-                .fillMaxHeight()
-                .padding(start = 26.dp, end = 34.dp, top = 18.dp, bottom = 22.dp),
+                .fillMaxSize()
+                .padding(
+                    start = if (compact) 10.dp else 26.dp,
+                    end = if (compact) 10.dp else 34.dp,
+                    top = if (compact) 7.dp else 18.dp,
+                    bottom = if (compact) 7.dp else 22.dp,
+                ),
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                CimoPlaceholder()
-                Spacer(Modifier.width(12.dp))
+                CimoPlaceholder(size = if (compact) 40.dp else 64.dp)
+                Spacer(Modifier.width(if (compact) 7.dp else 12.dp))
                 Column {
-                    Text(stringResource(R.string.partitures_festeres), fontSize = 31.sp, color = Burgundy, fontWeight = FontWeight.SemiBold)
-                    Text(stringResource(R.string.settings_title), fontSize = 22.sp, color = Navy, fontWeight = FontWeight.Medium)
+                    Text(
+                        stringResource(R.string.partitures_festeres),
+                        fontSize = if (compact) 24.sp else 31.sp,
+                        color = Burgundy,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                    Text(
+                        stringResource(R.string.settings_title),
+                        fontSize = if (compact) 18.sp else 22.sp,
+                        color = Navy,
+                        fontWeight = FontWeight.Medium,
+                    )
                 }
                 Spacer(Modifier.weight(1f))
-                Icon(Icons.Default.Settings, contentDescription = null, tint = Ink, modifier = Modifier.size(30.dp))
+                Icon(Icons.Default.Settings, contentDescription = null, tint = Ink, modifier = Modifier.size(if (compact) 25.dp else 30.dp))
             }
 
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(if (compact) 7.dp else 12.dp))
 
-            Row(
-                modifier = Modifier.fillMaxSize(),
-                horizontalArrangement = Arrangement.spacedBy(14.dp),
-            ) {
+            if (compact) {
                 FestivePanel(
-                    modifier = Modifier.weight(0.64f).fillMaxHeight(),
-                    cornerRadius = 20.dp,
+                    modifier = Modifier.fillMaxSize(),
+                    cornerRadius = 18.dp,
                     backgroundColor = ParchmentCard,
                 ) {
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
                             .verticalScroll(rememberScrollState())
-                            .padding(18.dp),
+                            .padding(14.dp),
                     ) {
-                        Text(stringResource(R.string.viewer_title), color = Burgundy, fontSize = 23.sp, fontWeight = FontWeight.SemiBold)
-                        Text(stringResource(R.string.settings_viewer_desc), color = MutedInk, fontSize = 13.sp)
-                        Spacer(Modifier.height(12.dp))
+                        Text(stringResource(R.string.viewer_title), color = Burgundy, fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
+                        Text(stringResource(R.string.settings_viewer_desc), color = MutedInk, fontSize = 12.sp)
+                        Spacer(Modifier.height(10.dp))
 
-                        LanguageSelector(
-                            language = settings.appLanguage,
-                            onLanguageChange = onLanguageChange,
-                        )
-                        Spacer(Modifier.height(12.dp))
+                        LanguageSelector(language = settings.appLanguage, onLanguageChange = onLanguageChange)
+                        Spacer(Modifier.height(10.dp))
 
                         SettingSliderRow(
                             label = stringResource(R.string.settings_menu_hide),
@@ -138,22 +145,18 @@ fun SettingsScreen(
                             steps = 8,
                             onChange = { onSettingsChange(settings.copy(menuHideSeconds = it.roundToInt())) },
                         )
-                        SettingToggleRow(
-                            stringResource(R.string.settings_show_score_name),
-                            settings.showScoreNameOnChange,
-                        ) { onSettingsChange(settings.copy(showScoreNameOnChange = it)) }
-                        SettingToggleRow(
-                            stringResource(R.string.settings_remember_zoom),
-                            settings.rememberZoom,
-                        ) { onSettingsChange(settings.copy(rememberZoom = it)) }
-                        SettingToggleRow(
-                            stringResource(R.string.settings_keep_screen_on),
-                            settings.keepScreenOn,
-                        ) { onSettingsChange(settings.copy(keepScreenOn = it)) }
-                        SettingToggleRow(
-                            stringResource(R.string.settings_allow_rotation),
-                            settings.allowViewerRotation,
-                        ) { onSettingsChange(settings.copy(allowViewerRotation = it)) }
+                        SettingToggleRow(stringResource(R.string.settings_show_score_name), settings.showScoreNameOnChange) {
+                            onSettingsChange(settings.copy(showScoreNameOnChange = it))
+                        }
+                        SettingToggleRow(stringResource(R.string.settings_remember_zoom), settings.rememberZoom) {
+                            onSettingsChange(settings.copy(rememberZoom = it))
+                        }
+                        SettingToggleRow(stringResource(R.string.settings_keep_screen_on), settings.keepScreenOn) {
+                            onSettingsChange(settings.copy(keepScreenOn = it))
+                        }
+                        SettingToggleRow(stringResource(R.string.settings_allow_rotation), settings.allowViewerRotation) {
+                            onSettingsChange(settings.copy(allowViewerRotation = it))
+                        }
                         SettingSliderRow(
                             label = stringResource(R.string.settings_side_zones),
                             valueText = stringResource(R.string.percent_format, (settings.sideTapFraction * 100).roundToInt()),
@@ -162,10 +165,9 @@ fun SettingsScreen(
                             steps = 9,
                             onChange = { onSettingsChange(settings.copy(sideTapFraction = it)) },
                         )
-                        SettingToggleRow(
-                            stringResource(R.string.settings_brightness_override),
-                            settings.overrideBrightness,
-                        ) { onSettingsChange(settings.copy(overrideBrightness = it)) }
+                        SettingToggleRow(stringResource(R.string.settings_brightness_override), settings.overrideBrightness) {
+                            onSettingsChange(settings.copy(overrideBrightness = it))
+                        }
                         if (settings.overrideBrightness) {
                             SettingSliderRow(
                                 label = stringResource(R.string.settings_viewer_brightness),
@@ -177,37 +179,28 @@ fun SettingsScreen(
                             )
                         }
 
-                        Spacer(Modifier.height(14.dp))
+                        Spacer(Modifier.height(12.dp))
                         Button(
                             onClick = onSave,
                             colors = ButtonDefaults.buttonColors(backgroundColor = Burgundy, contentColor = Color.White),
                             shape = RoundedCornerShape(12.dp),
-                        ) {
-                            Text(stringResource(R.string.settings_save_changes))
-                        }
-                    }
-                }
+                        ) { Text(stringResource(R.string.settings_save_changes)) }
 
-                FestivePanel(
-                    modifier = Modifier.weight(0.36f).fillMaxHeight(),
-                    cornerRadius = 20.dp,
-                    backgroundColor = ParchmentCard,
-                ) {
-                    Column(Modifier.fillMaxSize().padding(18.dp)) {
-                        Text(stringResource(R.string.settings_library_data), color = Burgundy, fontSize = 21.sp, fontWeight = FontWeight.SemiBold)
-                        Spacer(Modifier.height(12.dp))
+                        Spacer(Modifier.height(20.dp))
+                        Text(stringResource(R.string.settings_library_data), color = Burgundy, fontSize = 19.sp, fontWeight = FontWeight.SemiBold)
+                        Spacer(Modifier.height(9.dp))
                         SettingsActionButton(Icons.Default.FolderOpen, stringResource(R.string.settings_select_root), onSelectRoot)
-                        Spacer(Modifier.height(10.dp))
+                        Spacer(Modifier.height(8.dp))
                         SettingsActionButton(Icons.Default.Backup, stringResource(R.string.settings_create_backup), onCreateBackup)
-                        Spacer(Modifier.height(10.dp))
+                        Spacer(Modifier.height(8.dp))
                         SettingsActionButton(Icons.Default.Restore, stringResource(R.string.settings_restore_backup), onRestoreBackup)
 
                         if (!backupMessage.isNullOrBlank()) {
-                            Spacer(Modifier.height(12.dp))
-                            Text(backupMessage, color = Navy, fontSize = 13.sp)
+                            Spacer(Modifier.height(10.dp))
+                            Text(backupMessage, color = Navy, fontSize = 12.sp)
                         }
 
-                        Spacer(Modifier.weight(1f))
+                        Spacer(Modifier.height(18.dp))
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(Icons.Default.Info, contentDescription = null, tint = AgedGold)
                             Spacer(Modifier.width(8.dp))
@@ -215,8 +208,115 @@ fun SettingsScreen(
                                 Text(stringResource(R.string.partitures_festeres), color = Ink, fontWeight = FontWeight.SemiBold)
                                 Text(stringResource(R.string.settings_version), color = MutedInk, fontSize = 12.sp)
                                 Text(stringResource(R.string.settings_backup_desc), color = MutedInk, fontSize = 11.sp)
-                                Spacer(Modifier.height(6.dp))
+                                Spacer(Modifier.height(5.dp))
                                 Text(stringResource(R.string.app_copyright), color = MutedInk.copy(alpha = 0.82f), fontSize = 10.sp)
+                            }
+                        }
+                        Spacer(Modifier.height(10.dp))
+                    }
+                }
+            } else {
+                Row(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalArrangement = Arrangement.spacedBy(14.dp),
+                ) {
+                    FestivePanel(
+                        modifier = Modifier.weight(0.64f).fillMaxHeight(),
+                        cornerRadius = 20.dp,
+                        backgroundColor = ParchmentCard,
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .verticalScroll(rememberScrollState())
+                                .padding(18.dp),
+                        ) {
+                            Text(stringResource(R.string.viewer_title), color = Burgundy, fontSize = 23.sp, fontWeight = FontWeight.SemiBold)
+                            Text(stringResource(R.string.settings_viewer_desc), color = MutedInk, fontSize = 13.sp)
+                            Spacer(Modifier.height(12.dp))
+
+                            LanguageSelector(language = settings.appLanguage, onLanguageChange = onLanguageChange)
+                            Spacer(Modifier.height(12.dp))
+
+                            SettingSliderRow(
+                                label = stringResource(R.string.settings_menu_hide),
+                                valueText = stringResource(R.string.seconds_format, settings.menuHideSeconds),
+                                value = settings.menuHideSeconds.toFloat(),
+                                range = 1f..10f,
+                                steps = 8,
+                                onChange = { onSettingsChange(settings.copy(menuHideSeconds = it.roundToInt())) },
+                            )
+                            SettingToggleRow(stringResource(R.string.settings_show_score_name), settings.showScoreNameOnChange) {
+                                onSettingsChange(settings.copy(showScoreNameOnChange = it))
+                            }
+                            SettingToggleRow(stringResource(R.string.settings_remember_zoom), settings.rememberZoom) {
+                                onSettingsChange(settings.copy(rememberZoom = it))
+                            }
+                            SettingToggleRow(stringResource(R.string.settings_keep_screen_on), settings.keepScreenOn) {
+                                onSettingsChange(settings.copy(keepScreenOn = it))
+                            }
+                            SettingToggleRow(stringResource(R.string.settings_allow_rotation), settings.allowViewerRotation) {
+                                onSettingsChange(settings.copy(allowViewerRotation = it))
+                            }
+                            SettingSliderRow(
+                                label = stringResource(R.string.settings_side_zones),
+                                valueText = stringResource(R.string.percent_format, (settings.sideTapFraction * 100).roundToInt()),
+                                value = settings.sideTapFraction,
+                                range = 0.12f..0.32f,
+                                steps = 9,
+                                onChange = { onSettingsChange(settings.copy(sideTapFraction = it)) },
+                            )
+                            SettingToggleRow(stringResource(R.string.settings_brightness_override), settings.overrideBrightness) {
+                                onSettingsChange(settings.copy(overrideBrightness = it))
+                            }
+                            if (settings.overrideBrightness) {
+                                SettingSliderRow(
+                                    label = stringResource(R.string.settings_viewer_brightness),
+                                    valueText = stringResource(R.string.percent_format, settings.brightnessPercent),
+                                    value = settings.brightnessPercent.toFloat(),
+                                    range = 20f..100f,
+                                    steps = 7,
+                                    onChange = { onSettingsChange(settings.copy(brightnessPercent = it.roundToInt())) },
+                                )
+                            }
+                            Spacer(Modifier.height(14.dp))
+                            Button(
+                                onClick = onSave,
+                                colors = ButtonDefaults.buttonColors(backgroundColor = Burgundy, contentColor = Color.White),
+                                shape = RoundedCornerShape(12.dp),
+                            ) { Text(stringResource(R.string.settings_save_changes)) }
+                        }
+                    }
+
+                    FestivePanel(
+                        modifier = Modifier.weight(0.36f).fillMaxHeight(),
+                        cornerRadius = 20.dp,
+                        backgroundColor = ParchmentCard,
+                    ) {
+                        Column(Modifier.fillMaxSize().padding(18.dp)) {
+                            Text(stringResource(R.string.settings_library_data), color = Burgundy, fontSize = 21.sp, fontWeight = FontWeight.SemiBold)
+                            Spacer(Modifier.height(12.dp))
+                            SettingsActionButton(Icons.Default.FolderOpen, stringResource(R.string.settings_select_root), onSelectRoot)
+                            Spacer(Modifier.height(10.dp))
+                            SettingsActionButton(Icons.Default.Backup, stringResource(R.string.settings_create_backup), onCreateBackup)
+                            Spacer(Modifier.height(10.dp))
+                            SettingsActionButton(Icons.Default.Restore, stringResource(R.string.settings_restore_backup), onRestoreBackup)
+
+                            if (!backupMessage.isNullOrBlank()) {
+                                Spacer(Modifier.height(12.dp))
+                                Text(backupMessage, color = Navy, fontSize = 13.sp)
+                            }
+                            Spacer(Modifier.weight(1f))
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(Icons.Default.Info, contentDescription = null, tint = AgedGold)
+                                Spacer(Modifier.width(8.dp))
+                                Column {
+                                    Text(stringResource(R.string.partitures_festeres), color = Ink, fontWeight = FontWeight.SemiBold)
+                                    Text(stringResource(R.string.settings_version), color = MutedInk, fontSize = 12.sp)
+                                    Text(stringResource(R.string.settings_backup_desc), color = MutedInk, fontSize = 11.sp)
+                                    Spacer(Modifier.height(6.dp))
+                                    Text(stringResource(R.string.app_copyright), color = MutedInk.copy(alpha = 0.82f), fontSize = 10.sp)
+                                }
                             }
                         }
                     }
@@ -224,6 +324,7 @@ fun SettingsScreen(
             }
         }
     }
+
 }
 
 @Composable

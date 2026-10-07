@@ -20,14 +20,19 @@ class SplashActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+        requestedOrientation = if (resources.configuration.smallestScreenWidthDp >= 600) {
+            ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+        } else {
+            ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
+        }
         if (SettingsStore(this).load().keepScreenOn) {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
 
+        val isTablet = resources.configuration.smallestScreenWidthDp >= 600
         val splashImage = ImageView(this).apply {
             setImageResource(com.partituresfesteres.app.R.drawable.splash_screen_art)
-            scaleType = ImageView.ScaleType.FIT_XY
+            scaleType = if (isTablet) ImageView.ScaleType.FIT_XY else ImageView.ScaleType.FIT_CENTER
             setBackgroundColor(0xFFF4E8D2.toInt())
             layoutParams = android.view.ViewGroup.LayoutParams(
                 android.view.ViewGroup.LayoutParams.MATCH_PARENT,
