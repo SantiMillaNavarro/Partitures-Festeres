@@ -1,0 +1,94 @@
+PARTITURES FESTERES — NON-COMMERCIAL SOURCE-AVAILABLE LICENSE
+Version 1.0 — 2026
+
+Copyright © 2026 Santi Milla Navarro
+All rights reserved except as expressly granted below.
+
+1. SCOPE
+
+This license applies to the source code, documentation and other materials
+contained in the Partitures Festeres repository, unless a specific file
+states otherwise.
+
+2. PERMITTED USES
+
+You are granted a non-exclusive, worldwide, royalty-free permission to:
+
+a) view and study the source code;
+b) download and run the software for personal, educational or non-commercial use;
+c) modify the source code for personal, educational or non-commercial purposes;
+d) create forks of the repository for the purpose of studying, testing,
+   improving or contributing to the project;
+e) submit modifications, bug fixes, documentation or other contributions
+   to the official project through pull requests or other collaborative means.
+
+3. NON-COMMERCIAL REQUIREMENT
+
+The software, source code, modified versions and substantial portions of the
+project may not be sold, licensed for a fee, included in a paid product or
+service, monetised, commercially redistributed, or otherwise used primarily
+for commercial advantage or monetary compensation without prior written
+permission from the copyright holder.
+
+4. REDISTRIBUTION
+
+Non-commercial redistribution of the source code or modified versions is
+permitted only if:
+
+a) this copyright notice and license are retained;
+b) the original author and project are clearly acknowledged;
+c) modified versions are clearly identified as modified;
+d) the redistribution does not imply endorsement by the original author;
+e) the redistribution remains non-commercial.
+
+5. NAME AND IDENTITY OF THE PROJECT
+
+This license does not grant permission to use the name "Partitures Festeres",
+its logos, visual identity or other distinctive project branding in a way
+that suggests an official release, endorsement, sponsorship or authorship by
+the original project owner.
+
+6. CONTRIBUTIONS
+
+Unless otherwise agreed in writing, contributions submitted to the official
+Partitures Festeres repository may be incorporated into the project under the
+terms of this license.
+
+Contributors retain any rights they may have in their original contributions,
+while granting the project owner a perpetual, worldwide, non-exclusive,
+royalty-free license to use, reproduce, modify, distribute and incorporate
+those contributions into Partitures Festeres under this license and in future
+versions of the project.
+
+7. NO WARRANTY
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT.
+
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY CLAIM,
+DAMAGES OR OTHER LIABILITY ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR ITS USE.
+
+8. COMMERCIAL LICENSING
+
+Commercial use may be authorised separately by the copyright holder.
+
+For commercial licensing or other permissions, contact the project owner
+through the official GitHub repository.
+
+9. TERMINATION
+
+Any rights granted under this license terminate automatically if its terms are
+violated. Rights may be reinstated only with explicit permission from the
+copyright holder or after the violation has been fully remedied and the
+copyright holder has accepted that remedy.
+
+10. RESERVATION OF RIGHTS
+
+Any rights not expressly granted by this license are reserved by the copyright
+holder.
+
+This license is intended to make the source code available for learning,
+collaboration and non-commercial use. It is not an Open Source Initiative
+approved open-source license because commercial use is restricted.

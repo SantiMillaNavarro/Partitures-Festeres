@@ -1,0 +1,46 @@
+# Android / Gradle
+gradle/gradle-daemon-jvm.properties
+.gradle/
+build/
+**/build/
+local.properties
+
+# Android Studio / IntelliJ
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Signing / sensitive files
+*.jks
+*.keystore
+keystore.properties
+
+# Native build
+.externalNativeBuild/
+.cxx/
+
+# Generated files
+captures/
+.navigation/
+*.apk
+*.aab
+*.ap_
+
+# Kotlin / Java
+*.class
+
+# Logs
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary / backup files
+*.tmp
+*.temp
+*.bak
+*~
