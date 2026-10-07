@@ -8,7 +8,7 @@ Android application for organising, consulting and using festive-band sheet musi
 
 **Partitures Festeres is under active development and already has stable, usable releases.**
 
-Current stable version: **v1.6.5** (versionCode 27).
+Current stable version: **v1.8.2** (versionCode 37).
 
 The latest version can be downloaded from [GitHub Releases](https://github.com/SantiMillaNavarro/Partitures-Festeres/releases/latest).
 
@@ -27,21 +27,27 @@ Available features include:
 - Quick access to **Recent** and **Favourite** scores.
 - Score **search**.
 - Document **import and scanning**.
-- **PDF viewer** adapted to portrait and landscape orientation.
-- Viewing adjustments and **annotations** on scores.
+- **Independent and stable PDF viewer**, with its own orientation handling and portrait/landscape support.
+- Viewing adjustments, **annotations** and PDF repair tools.
 - Preservation of reading state and preferences.
 - **Backups** of settings and application-managed data.
-- Integrated musical tools: **tuner**, **metronome** and **reference tone**.
+- Integrated musical tools: **tuner**, **metronome**, **reference tone** and **Musical Dictation**.
+- **Dictat Marina** mode, designed to quickly turn spoken or sung voice into a sequence of notes.
+- Export and sharing of generated staves as **PNG images**.
+- **Metronome** with 2/4, 3/4, 4/4, 6/8, 9/8 and 12/8 time signatures.
+- Hidden musical **easter egg** with a lightweight minigame.
 - **Widget** for quick access.
 - User interface available in **Valencian and Spanish**.
+- Adaptive navigation based on available space: **COMPACT**, **MEDIUM** and **EXPANDED**.
 
 ## Compatibility
 
 - Android **8.0 (API 26)** or later.
 - targetSdk: 36
 - compileSdk: 36
+- Adaptive interface for phones and tablets.
 
-The application is primarily designed for tablets, although it can also run on other compatible Android devices.
+Phones use bottom navigation, while tablets use a sidebar adapted to the available space.
 
 ## User guide
 
