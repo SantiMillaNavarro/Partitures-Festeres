@@ -8,7 +8,7 @@ Aplicació Android per organitzar, consultar i utilitzar partitures festeres des
 
 **Partitures Festeres està en desenvolupament actiu i ja disposa de versions estables utilitzables.**
 
-Versió estable actual: **v1.6.5** (versionCode 27).
+Versió estable actual: **v1.8.2** (versionCode 37).
 
 La versió més recent es pot descarregar des de [GitHub Releases](https://github.com/SantiMillaNavarro/Partitures-Festeres/releases/latest).
 
@@ -27,21 +27,27 @@ Entre les funcions disponibles es troben:
 - Accés ràpid a **Recents** i **Favorits**.
 - **Cerca** de partitures.
 - **Importació i escaneig** de documents.
-- **Visor de PDF** adaptat a orientació vertical i horitzontal.
-- Ajustos de visualització i **anotacions** sobre les partitures.
+- **Visor PDF independent i estable**, amb orientació pròpia i suport vertical/horitzontal.
+- Ajustos de visualització, **anotacions** i reparador de PDF.
 - Conservació d'estats i preferències de lectura.
 - **Còpies de seguretat** de la configuració i dades gestionades per l'aplicació.
-- Eines musicals integrades: **afinador**, **metrònom** i **nota de referència**.
+- Eines musicals integrades: **afinador**, **metrònom**, **nota de referència** i **Dictat Musical**.
+- Mode **Dictat Marina**, pensat per transformar ràpidament la veu parlada o cantada en una seqüència de notes.
+- Exportació i compartició dels pentagrames generats com a **imatge PNG**.
+- **Metrònom** amb compassos 2/4, 3/4, 4/4, 6/8, 9/8 i 12/8.
+- **Easter egg** amb minijoc musical ocult.
 - **Widget** per a accés ràpid.
 - Interfície disponible en **valencià i castellà**.
+- Navegació adaptativa segons l'espai disponible: **COMPACT**, **MEDIUM** i **EXPANDED**.
 
 ## Compatibilitat
 
 - Android **8.0 (API 26)** o posterior.
 - targetSdk: 36
 - compileSdk: 36
+- Interfície adaptativa per a mòbils i tablets.
 
-L'aplicació està pensada especialment per a tauletes, encara que també pot executar-se en altres dispositius Android compatibles.
+En telèfons s'utilitza navegació inferior, mentre que en tablets la interfície utilitza una barra lateral adaptada a l'espai disponible.
 
 ## Guia d'ús
 
