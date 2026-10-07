@@ -172,10 +172,6 @@ fun DictationMarinaPanel(referenceHz: Int) {
         }
     }
 
-    LaunchedEffect(notes.size) {
-        if (notes.isNotEmpty()) scroll.animateScrollTo(scroll.maxValue)
-    }
-
     DisposableEffect(Unit) {
         onDispose { engine.stop() }
     }
@@ -185,177 +181,193 @@ fun DictationMarinaPanel(referenceHz: Int) {
         cornerRadius = 22.dp,
         backgroundColor = ParchmentCard,
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(scroll)
-                .padding(horizontal = 16.dp, vertical = 14.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
+        Box(modifier = Modifier.fillMaxSize()) {
+            // El contenido puede crecer y desplazarse, pero nunca se desplaza por sí solo.
+            // El usuario mantiene el control total del scroll.
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(scroll)
+                    .padding(start = 16.dp, end = 16.dp, top = 14.dp, bottom = 96.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Column(modifier = Modifier) {
-                    Text(
-                        text = if (marinaMode) stringResource(R.string.dictation_marina) else stringResource(R.string.dictation_musical),
-                        color = Burgundy,
-                        fontSize = 22.sp,
-                        fontWeight = FontWeight.Bold,
-                    )
-                    Text(
-                        text = if (running) {
-                            if (marinaMode) stringResource(R.string.dictation_listening_marina)
-                            else stringResource(R.string.dictation_listening)
-                        } else {
-                            stringResource(R.string.dictation_notes_count, notes.size)
-                        },
-                        color = MutedInk,
-                        fontSize = 12.sp,
-                    )
-                }
-                Spacer(Modifier.size(6.dp))
-                reading?.let {
-                    Text(
-                        it.noteName,
-                        color = Navy,
-                        fontSize = 28.sp,
-                        fontWeight = FontWeight.Bold,
-                    )
-                }
-            }
-
-            Spacer(Modifier.height(8.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                TextButton(
-                    onClick = {
-                        marinaMode = !marinaMode
-                        running = false
-                        reading = null
-                        notes.clear()
-                    },
-                ) {
-                    Text(if (marinaMode) stringResource(R.string.dictation_musical) else stringResource(R.string.dictation_marina))
-                }
-                if (marinaMode) {
-                    Text(
-                        text = stringResource(R.string.dictation_marina_hint),
-                        color = Burgundy,
-                        fontSize = 11.sp,
-                    )
-                }
-            }
-
-            if (marinaMode) {
-                Spacer(Modifier.height(6.dp))
-                MarinaMascotCard()
-            }
-
-            Spacer(Modifier.height(10.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Button(
-                    onClick = {
-                        if (!hasPermission) permissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
-                        else running = !running
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = if (running) Burgundy else HeritageGreen,
-                        contentColor = Color.White,
-                    ),
-                    shape = RoundedCornerShape(14.dp),
-                ) {
-                    Icon(if (running) Icons.Default.Stop else Icons.Default.Mic, contentDescription = null)
-                    Spacer(Modifier.size(7.dp))
-                    Text(if (running) stringResource(R.string.dictation_stop) else stringResource(R.string.dictation_start))
-                }
-
-                TextButton(
-                    onClick = { if (!running) notes.clear() },
-                    enabled = !running && notes.isNotEmpty(),
-                ) {
-                    Icon(Icons.Default.DeleteSweep, contentDescription = null)
-                    Spacer(Modifier.size(4.dp))
-                    Text(stringResource(R.string.dictation_clear))
-                }
-            }
-
-            if (!hasPermission) {
-                Text(stringResource(R.string.dictation_permission), color = MutedInk, fontSize = 11.sp)
-            }
-
-            Spacer(Modifier.height(8.dp))
-            Text(
-                text = if (marinaMode) stringResource(R.string.dictation_pitch_only_marina) else stringResource(R.string.dictation_pitch_only),
-                modifier = Modifier.fillMaxWidth(),
-                color = MutedInk,
-                fontSize = 11.sp,
-            )
-            Spacer(Modifier.height(12.dp))
-
-            if (notes.isEmpty()) {
-                Box(
-                    modifier = Modifier.fillMaxWidth().height(if (marinaMode) 210.dp else 190.dp),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text(
-                        text = if (marinaMode) stringResource(R.string.dictation_empty_marina) else stringResource(R.string.dictation_empty),
-                        color = MutedInk,
-                        fontSize = 14.sp,
-                    )
-                }
-            } else {
-                StaffScore(notes = notes.toList(), modifier = Modifier.fillMaxWidth())
-            }
-
-            if (!running && notes.isNotEmpty()) {
-                Spacer(Modifier.height(16.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                ) {
+                    Column(modifier = Modifier) {
+                        Text(
+                            text = if (marinaMode) stringResource(R.string.dictation_marina) else stringResource(R.string.dictation_musical),
+                            color = Burgundy,
+                            fontSize = 22.sp,
+                            fontWeight = FontWeight.Bold,
+                        )
+                        Text(
+                            text = if (running) {
+                                if (marinaMode) stringResource(R.string.dictation_listening_marina)
+                                else stringResource(R.string.dictation_listening)
+                            } else {
+                                stringResource(R.string.dictation_notes_count, notes.size)
+                            },
+                            color = MutedInk,
+                            fontSize = 12.sp,
+                        )
+                    }
+                    Spacer(Modifier.size(6.dp))
+                    reading?.let {
+                        Text(
+                            it.noteName,
+                            color = Navy,
+                            fontSize = 28.sp,
+                            fontWeight = FontWeight.Bold,
+                        )
+                    }
+                }
+
+                Spacer(Modifier.height(8.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    TextButton(
+                        onClick = {
+                            marinaMode = !marinaMode
+                            running = false
+                            reading = null
+                            notes.clear()
+                        },
+                    ) {
+                        Text(if (marinaMode) stringResource(R.string.dictation_musical) else stringResource(R.string.dictation_marina))
+                    }
+                    if (marinaMode) {
+                        Text(
+                            text = stringResource(R.string.dictation_marina_hint),
+                            color = Burgundy,
+                            fontSize = 11.sp,
+                        )
+                    }
+                }
+
+                if (marinaMode) {
+                    Spacer(Modifier.height(6.dp))
+                    MarinaMascotCard()
+                }
+
+                if (!hasPermission) {
+                    Spacer(Modifier.height(8.dp))
+                    Text(stringResource(R.string.dictation_permission), color = MutedInk, fontSize = 11.sp)
+                }
+
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    text = if (marinaMode) stringResource(R.string.dictation_pitch_only_marina) else stringResource(R.string.dictation_pitch_only),
+                    modifier = Modifier.fillMaxWidth(),
+                    color = MutedInk,
+                    fontSize = 11.sp,
+                )
+                Spacer(Modifier.height(12.dp))
+
+                if (notes.isEmpty()) {
+                    Box(
+                        modifier = Modifier.fillMaxWidth().height(if (marinaMode) 210.dp else 190.dp),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text(
+                            text = if (marinaMode) stringResource(R.string.dictation_empty_marina) else stringResource(R.string.dictation_empty),
+                            color = MutedInk,
+                            fontSize = 14.sp,
+                        )
+                    }
+                } else {
+                    StaffScore(notes = notes.toList(), modifier = Modifier.fillMaxWidth())
+                }
+
+                if (!running && notes.isNotEmpty()) {
+                    Spacer(Modifier.height(16.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                    ) {
+                        Button(
+                            onClick = {
+                                val bitmap = renderScoreBitmap(notes.toList(), marinaMode)
+                                val ok = saveBitmapToGallery(context, bitmap, marinaMode)
+                                Toast.makeText(
+                                    context,
+                                    if (ok) context.getString(R.string.dictation_saved) else context.getString(R.string.dictation_save_error),
+                                    Toast.LENGTH_SHORT,
+                                ).show()
+                            },
+                            colors = ButtonDefaults.buttonColors(backgroundColor = Navy, contentColor = Color.White),
+                            shape = RoundedCornerShape(14.dp),
+                        ) {
+                            Text(stringResource(R.string.dictation_save_image))
+                        }
+                        Spacer(Modifier.size(10.dp))
+                        Button(
+                            onClick = {
+                                runCatching {
+                                    shareBitmap(context, renderScoreBitmap(notes.toList(), marinaMode), marinaMode)
+                                }.onFailure {
+                                    Toast.makeText(context, context.getString(R.string.dictation_share_error), Toast.LENGTH_SHORT).show()
+                                }
+                            },
+                            colors = ButtonDefaults.buttonColors(backgroundColor = Burgundy, contentColor = Color.White),
+                            shape = RoundedCornerShape(14.dp),
+                        ) {
+                            Icon(Icons.Default.Share, contentDescription = null)
+                            Spacer(Modifier.size(7.dp))
+                            Text(stringResource(R.string.dictation_share))
+                        }
+                    }
+                }
+                Spacer(Modifier.height(12.dp))
+            }
+
+            // Barra fija: permanece visible aunque el pentagrama crezca o el usuario haga scroll.
+            Surface(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth(),
+                color = ParchmentCard.copy(alpha = 0.97f),
+                elevation = 8.dp,
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 10.dp),
                     horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Button(
                         onClick = {
-                            val bitmap = renderScoreBitmap(notes.toList(), marinaMode)
-                            val ok = saveBitmapToGallery(context, bitmap, marinaMode)
-                            Toast.makeText(
-                                context,
-                                if (ok) context.getString(R.string.dictation_saved) else context.getString(R.string.dictation_save_error),
-                                Toast.LENGTH_SHORT,
-                            ).show()
+                            if (!hasPermission) permissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+                            else running = !running
                         },
-                        colors = ButtonDefaults.buttonColors(backgroundColor = Navy, contentColor = Color.White),
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = if (running) Burgundy else HeritageGreen,
+                            contentColor = Color.White,
+                        ),
                         shape = RoundedCornerShape(14.dp),
                     ) {
-                        Text(stringResource(R.string.dictation_save_image))
-                    }
-                    Spacer(Modifier.size(10.dp))
-                    Button(
-                        onClick = {
-                            runCatching {
-                                shareBitmap(context, renderScoreBitmap(notes.toList(), marinaMode), marinaMode)
-                            }.onFailure {
-                                Toast.makeText(context, context.getString(R.string.dictation_share_error), Toast.LENGTH_SHORT).show()
-                            }
-                        },
-                        colors = ButtonDefaults.buttonColors(backgroundColor = Burgundy, contentColor = Color.White),
-                        shape = RoundedCornerShape(14.dp),
-                    ) {
-                        Icon(Icons.Default.Share, contentDescription = null)
+                        Icon(if (running) Icons.Default.Stop else Icons.Default.Mic, contentDescription = null)
                         Spacer(Modifier.size(7.dp))
-                        Text(stringResource(R.string.dictation_share))
+                        Text(if (running) stringResource(R.string.dictation_stop) else stringResource(R.string.dictation_start))
+                    }
+
+                    Spacer(Modifier.size(10.dp))
+                    TextButton(
+                        onClick = { if (!running) notes.clear() },
+                        enabled = !running && notes.isNotEmpty(),
+                    ) {
+                        Icon(Icons.Default.DeleteSweep, contentDescription = null)
+                        Spacer(Modifier.size(4.dp))
+                        Text(stringResource(R.string.dictation_clear))
                     }
                 }
             }
-            Spacer(Modifier.height(12.dp))
         }
     }
 }

@@ -1,108 +1,54 @@
-# Partitures Festeres
+# Partitures Festeres v1.8.3
 
-**Valencià** · [Español](README_es.md) · [English](README_en.md)
+Aplicació Android per organitzar, visualitzar i anotar partitures, pensada per a assajos i actuacions i adaptada automàticament tant a tablets com a telèfons.
 
-Aplicació Android per organitzar, consultar i utilitzar partitures festeres des de tauletes i dispositius Android, pensada especialment per a assajos, cercaviles, concerts i altres situacions en què cal portar un repertori ampli de manera còmoda.
 
-## Estat del projecte
+## Novetats v1.8.3
+- Metrònom simplificat a dos únics sons: primer temps fort i resta de pulsacions/subdivisions dèbils.
+- Compassos disponibles: 2/4, 3/4, 4/4, 6/8, 9/8 i 12/8.
+- Minijoc ocult amb hitboxes més estrictes i indulgents visualment.
+- Més varietat d'obstacles: figures, silencis, alteracions, lligadures i altres símbols musicals.
+- Obstacles aeris a mesura que avança la partida.
+- Generació aleatòria controlada perquè cada partida tinga un recorregut diferent sense combinacions impossibles.
 
-**Partitures Festeres està en desenvolupament actiu i ja disposa de versions estables utilitzables.**
+## Easter egg v1.7.4
+- Pulsació secreta de 3 segons sobre el centre del rosetó inferior dret de la Biblioteca en tablet.
+- Transició d'entrada amb aclarit breu de la pantalla.
+- Minijoc lleuger tipus endless runner amb un saxo amb potetes i figures musicals com a obstacles.
+- Puntuació i rècord local, sense permisos, xarxa ni dependències addicionals.
 
-Versió estable actual: **v1.8.2** (versionCode 37).
+## Estabilització v1.7.2
+- El visor PDF passa a una `PdfViewerActivity` independent de `MainActivity`.
+- La interfície principal ja no canvia la seua política d'orientació en entrar o eixir d'una partitura.
+- `PdfViewerScreen` ja no escriu ni restaura `requestedOrientation` durant la composició/descomposició.
+- El visor usa `fullSensor` com a política pròpia; si l'usuari desactiva la rotació del visor, es fixa a landscape una sola vegada en crear l'Activity.
+- S'elimina la pantalla addicional `Carregant partitura…` introduïda en v1.7.1 i es recupera el comportament de càrrega de v1.7.0.
+- Les tablets `MEDIUM`, com la Nokia T10, recuperen els noms de Biblioteca, Repertoris, Recents, Favorits i Eines en la barra lateral; la columna continua sent desplaçable verticalment si l'alçària és limitada.
+- En tornar del visor, la pantalla principal refresca favorits, recents i ajustos compartits.
+- Es manté íntegre el sistema responsive de v1.7.0: navegació inferior en mòbil, barra lateral adaptativa en tablet i disseny complet en pantalles grans.
+- Widget, idiomes, anotacions, reparador PDF, metrònom, afinador i nota de referència es mantenen sense canvis funcionals.
 
-La versió més recent es pot descarregar des de [GitHub Releases](https://github.com/SantiMillaNavarro/Partitures-Festeres/releases/latest).
+## Arquitectura adaptativa
+- `COMPACT`: amplària < 600 dp o alçària < 480 dp.
+- `MEDIUM`: amplària < 840 dp o alçària < 600 dp.
+- `EXPANDED`: resta de finestres.
+- La selecció és automàtica segons l'espai real disponible; no depén del model del dispositiu.
 
-## Objectiu
+## Versió
+- versionCode: 33
+- versionName: 1.7.5
 
-El projecte naix amb l'objectiu de reduir la dependència de carpetes físiques, papers i arxius dispersos, permetent mantindre una biblioteca de partitures organitzada i accessible directament des d'una tauleta Android.
 
-L'aplicació respecta l'estructura real de carpetes del dispositiu i està pensada perquè el músic puga arribar ràpidament a la partitura que necessita.
+## Dictat Marina v1.8.3
+- Nova eina musical basada en el detector de freqüència de l’afinador.
+- Registra notes estables i les representa sobre pentagrames en clau de sol.
+- Afig pentagrames cap avall quan s’ompli l’espai disponible.
+- En esta primera versió transcriu altura; les notes es dibuixen com a negres.
+- En acabar, permet guardar el resultat com a PNG o compartir-lo amb el selector estàndard d’Android.
 
-## Funcions actuals
 
-Entre les funcions disponibles es troben:
+- v1.8.3: la nova eina passa a dir-se **Dictat Musical** i incorpora un submode **Dictat Marina** pensat per convertir la veu en una seqüència ràpida de notes sobre pentagrama, amb exportació i compartició d’imatge.
 
-- **Biblioteca basada en carpetes reals**, amb detecció dinàmica de subcarpetes.
-- **Repertoris** per agrupar i preparar conjunts de partitures.
-- Accés ràpid a **Recents** i **Favorits**.
-- **Cerca** de partitures.
-- **Importació i escaneig** de documents.
-- **Visor PDF independent i estable**, amb orientació pròpia i suport vertical/horitzontal.
-- Ajustos de visualització, **anotacions** i reparador de PDF.
-- Conservació d'estats i preferències de lectura.
-- **Còpies de seguretat** de la configuració i dades gestionades per l'aplicació.
-- Eines musicals integrades: **afinador**, **metrònom**, **nota de referència** i **Dictat Musical**.
-- Mode **Dictat Marina**, pensat per transformar ràpidament la veu parlada o cantada en una seqüència de notes.
-- Exportació i compartició dels pentagrames generats com a **imatge PNG**.
-- **Metrònom** amb compassos 2/4, 3/4, 4/4, 6/8, 9/8 i 12/8.
-- **Easter egg** amb minijoc musical ocult.
-- **Widget** per a accés ràpid.
-- Interfície disponible en **valencià i castellà**.
-- Navegació adaptativa segons l'espai disponible: **COMPACT**, **MEDIUM** i **EXPANDED**.
+- v1.8.3: substituïda la mascota de Dictat Marina per una il·lustració PNG transparent i afegida una normalització d’octava en Dictat Marina perquè la veu es represente dins del rang C4–B5 de clau de sol.
 
-## Compatibilitat
-
-- Android **8.0 (API 26)** o posterior.
-- targetSdk: 36
-- compileSdk: 36
-- Interfície adaptativa per a mòbils i tablets.
-
-En telèfons s'utilitza navegació inferior, mentre que en tablets la interfície utilitza una barra lateral adaptada a l'espai disponible.
-
-## Guia d'ús
-
-Consulta la [guia d'ús en valencià](docs/GUIA_US_va.md) per conéixer les funcions principals de l'aplicació amb exemples visuals.
-
-També estan disponibles:
-
-- [Guía de uso en español](docs/GUIA_US_es.md)
-- [User guide in English](docs/USER_GUIDE_en.md)
-
-## Descàrrega i instal·lació
-
-La versió estable més recent està disponible en l'apartat [**Releases**](https://github.com/SantiMillaNavarro/Partitures-Festeres/releases/latest).
-
-Per instal·lar l'aplicació:
-
-1. descarrega l'APK de l'última Release;
-2. obri'l en el dispositiu Android;
-3. si Android ho sol·licita, autoritza temporalment la instal·lació d'aplicacions des d'aquesta font.
-
-No és necessari compilar el projecte per utilitzar l'aplicació.
-
-## Desenvolupament i col·laboració
-
-El codi font i la documentació del projecte es mantenen en aquest repositori.
-
-Les propostes de millora, detecció d'errors i contribucions són benvingudes:
-
-- utilitza **Issues** per comunicar errors, suggeriments o idees;
-- utilitza **Pull Requests** per proposar modificacions del codi.
-
-Les contribucions poden ser revisades abans d'incorporar-se a la branca principal.
-
-## Llicència
-
-Aquest projecte es distribueix sota la **Partitures Festeres — Non-Commercial Source-Available License**.
-
-La llicència permet consultar, estudiar, executar, modificar i crear forks del projecte per a usos personals, educatius, no comercials o de col·laboració, però **no permet l'explotació comercial sense autorització expressa** del titular dels drets.
-
-Aquesta és una llicència pròpia de tipus *source-available* i **no és una llicència Open Source aprovada per l'OSI**.
-
-Consulta el fitxer [LICENSE](LICENSE) per a conéixer les condicions completes.
-
-## Ús d'intel·ligència artificial
-
-Aquest projecte s'ha desenvolupat amb una participació significativa d'eines d'intel·ligència artificial.
-
-El **codi de l'aplicació ha sigut generat de manera iterativa amb ChatGPT, d'OpenAI, a partir de les especificacions, requisits, decisions de disseny, proves i indicacions proporcionades per Santi Milla Navarro**.
-
-Santi Milla Navarro ha dirigit el desenvolupament funcional del projecte: ha definit els objectius i el comportament de l'aplicació, ha pres les decisions de disseny, ha provat les diferents versions en dispositius reals, ha detectat errors i ha indicat les correccions i millores necessàries. ChatGPT ha actuat com a eina de desenvolupament, generant i modificant el codi d'acord amb aquestes indicacions i ajudant també en tasques de documentació, revisió i organització del projecte.
-
-Aquesta informació es declara expressament per garantir la màxima transparència sobre el procés de desenvolupament.
-
-## Autor
-
-© 2026 Santi Milla Navarro
-
-Partitures Festeres és un projecte dirigit per **Santi Milla Navarro**.
+- v1.8.3: els controls Començar/Acabar dictat i Netejar queden fixos a la part inferior; s’elimina l’auto-scroll dels pentagrames perquè l’usuari controle completament el desplaçament.

@@ -75,19 +75,21 @@ dins de la mateixa Activity, que provocava animacions i intents repetits de rota
 - El generador d'obstacles incorpora figures, silencis, alteracions, clau de sol, calderó i notes lligades, amb desbloqueig progressiu.
 - A partir d'una certa duració poden aparéixer obstacles aeris a dues altures.
 - L'espai entre obstacles i el tipus seleccionat es randomitzen en cada partida mantenint marges que eviten seqüències injustes.
-## v1.8.2
+## v1.8.3
 - Metrònom: sis compassos distribuïts en una graella 3x2, amb botons de la mateixa mida.
 - Joc ocult: parella de corxeres unides amb una sola barra dibuixada explícitament.
 - Joc ocult: grup de quatre semicorxeres amb dues barres, afegit com a obstacle independent.
 
 
-## v1.8.2 — Dictat Marina
+## v1.8.3 — Dictat Marina
 - `DictationMarinaPanel.kt`: captura amb `TunerEngine`, estabilització temporal (~150 ms), conversió MIDI i pentagrama responsive.
 - Exportació PNG amb `MediaStore` (Android 10+) i carpeta externa pròpia en Android 8/9.
 - Compartició mitjançant `FileProvider` i `ACTION_SEND`.
 - No s’afegeixen permisos nous: reutilitza `RECORD_AUDIO`.
 
 
-- v1.8.2: la nova eina passa a dir-se **Dictat Musical** i incorpora un submode **Dictat Marina** pensat per convertir la veu en una seqüència ràpida de notes sobre pentagrama, amb exportació i compartició d’imatge.
+- v1.8.3: la nova eina passa a dir-se **Dictat Musical** i incorpora un submode **Dictat Marina** pensat per convertir la veu en una seqüència ràpida de notes sobre pentagrama, amb exportació i compartició d’imatge.
 
-- v1.8.2: substituïda la mascota de Dictat Marina per una il·lustració PNG transparent i afegida una normalització d’octava en Dictat Marina perquè la veu es represente dins del rang C4–B5 de clau de sol.
+- v1.8.3: substituïda la mascota de Dictat Marina per una il·lustració PNG transparent i afegida una normalització d’octava en Dictat Marina perquè la veu es represente dins del rang C4–B5 de clau de sol.
+
+- v1.8.3: els controls Començar/Acabar dictat i Netejar queden fixos a la part inferior; s’elimina l’auto-scroll dels pentagrames perquè l’usuari controle completament el desplaçament.
