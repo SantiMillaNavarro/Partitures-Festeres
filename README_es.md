@@ -8,7 +8,7 @@ Aplicación Android para organizar, consultar y utilizar partituras festeras des
 
 **Partitures Festeres está en desarrollo activo y ya dispone de versiones estables utilizables.**
 
-Versión estable actual: **v1.6.5** (versionCode 27).
+Versión estable actual: **v1.8.2** (versionCode 37).
 
 La versión más reciente puede descargarse desde [GitHub Releases](https://github.com/SantiMillaNavarro/Partitures-Festeres/releases/latest).
 
@@ -27,21 +27,27 @@ Entre las funciones disponibles se encuentran:
 - Acceso rápido a **Recientes** y **Favoritos**.
 - **Búsqueda** de partituras.
 - **Importación y escaneo** de documentos.
-- **Visor de PDF** adaptado a orientación vertical y horizontal.
-- Ajustes de visualización y **anotaciones** sobre las partituras.
+- **Visor PDF independiente y estable**, con orientación propia y soporte vertical/horizontal.
+- Ajustes de visualización, **anotaciones** y reparador de PDF.
 - Conservación de estados y preferencias de lectura.
 - **Copias de seguridad** de la configuración y datos gestionados por la aplicación.
-- Herramientas musicales integradas: **afinador**, **metrónomo** y **nota de referencia**.
+- Herramientas musicales integradas: **afinador**, **metrónomo**, **nota de referencia** y **Dictado Musical**.
+- Modo **Dictat Marina**, pensado para transformar rápidamente la voz hablada o cantada en una secuencia de notas.
+- Exportación y compartición de los pentagramas generados como **imagen PNG**.
+- **Metrónomo** con compases 2/4, 3/4, 4/4, 6/8, 9/8 y 12/8.
+- **Easter egg** con minijuego musical oculto.
 - **Widget** para acceso rápido.
 - Interfaz disponible en **valenciano y castellano**.
+- Navegación adaptativa según el espacio disponible: **COMPACT**, **MEDIUM** y **EXPANDED**.
 
 ## Compatibilidad
 
 - Android **8.0 (API 26)** o posterior.
 - targetSdk: 36
 - compileSdk: 36
+- Interfaz adaptativa para móviles y tablets.
 
-La aplicación está pensada especialmente para tabletas, aunque también puede ejecutarse en otros dispositivos Android compatibles.
+En teléfonos se utiliza navegación inferior, mientras que en tablets la interfaz utiliza una barra lateral adaptada al espacio disponible.
 
 ## Guía de uso
 
