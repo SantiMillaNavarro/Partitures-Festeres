@@ -1,4 +1,5 @@
 # Android / Gradle
+gradle/gradle-daemon-jvm.properties
 .gradle/
 build/
 **/build/

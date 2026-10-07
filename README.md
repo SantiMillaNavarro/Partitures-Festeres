@@ -1,18 +1,102 @@
-# Partitures Festeres v1.6.5
+# Partitures Festeres
 
-Aplicació Android per organitzar, visualitzar i anotar partitures, pensada especialment per a ús en tablet durant assajos i actuacions.
+**Valencià** · [Español](README_es.md) · [English](README_en.md)
 
-## Canvis de la v1.6.5
-- Revisió visual global dels contenidors i controls: els panells principals comparteixen ara el mateix acabat de pergamí, contorn daurat subtil i sense dobles requadres blancs/grisos.
-- Camps de text unificats amb fons de pergamí i vores coherents amb la resta de la interfície.
-- `Eines musicals` revisat a fons: pestanyes, selectors, octaves i accessos ràpids ja no depenen dels botons clars de Material que podien mostrar un segon rectangle intern.
-- `Nota de referència`: quadrícula de notes reorganitzada en 4 columnes perquè `Do♯/Re♭` i `Fa♯/Sol♭` no es retallen ni deformen.
-- Metrònom reescrit amb un motor `AudioTrack` de bucle PCM, amb temporització basada en mostres en lloc de llançar sons des de la UI.
-- Nous compassos: 2/4, 3/4, 4/4, 2/2, 3/8, 6/8, 9/8 i 12/8.
-- En 6/8, 9/8 i 12/8 el BPM representa el pols principal i el motor genera les tres subdivisions de corxera de cada pols.
-- Nou so sec tipus metrònom mecànic, amb lleugera alternança tick/tock, accent de primer temps i accents secundaris en compassos compostos.
-- Manté valencià per defecte, castellà seleccionable, iconografia adaptativa, widget i copyright de versions anteriors.
+Aplicació Android per organitzar, consultar i utilitzar partitures festeres des de tauletes i dispositius Android, pensada especialment per a assajos, cercaviles, concerts i altres situacions en què cal portar un repertori ampli de manera còmoda.
 
-## Versió
-- versionCode: 27
-- versionName: 1.6.5
+## Estat del projecte
+
+**Partitures Festeres està en desenvolupament actiu i ja disposa de versions estables utilitzables.**
+
+Versió estable actual: **v1.6.5** (versionCode 27).
+
+La versió més recent es pot descarregar des de [GitHub Releases](https://github.com/SantiMillaNavarro/Partitures-Festeres/releases/latest).
+
+## Objectiu
+
+El projecte naix amb l'objectiu de reduir la dependència de carpetes físiques, papers i arxius dispersos, permetent mantindre una biblioteca de partitures organitzada i accessible directament des d'una tauleta Android.
+
+L'aplicació respecta l'estructura real de carpetes del dispositiu i està pensada perquè el músic puga arribar ràpidament a la partitura que necessita.
+
+## Funcions actuals
+
+Entre les funcions disponibles es troben:
+
+- **Biblioteca basada en carpetes reals**, amb detecció dinàmica de subcarpetes.
+- **Repertoris** per agrupar i preparar conjunts de partitures.
+- Accés ràpid a **Recents** i **Favorits**.
+- **Cerca** de partitures.
+- **Importació i escaneig** de documents.
+- **Visor de PDF** adaptat a orientació vertical i horitzontal.
+- Ajustos de visualització i **anotacions** sobre les partitures.
+- Conservació d'estats i preferències de lectura.
+- **Còpies de seguretat** de la configuració i dades gestionades per l'aplicació.
+- Eines musicals integrades: **afinador**, **metrònom** i **nota de referència**.
+- **Widget** per a accés ràpid.
+- Interfície disponible en **valencià i castellà**.
+
+## Compatibilitat
+
+- Android **8.0 (API 26)** o posterior.
+- targetSdk: 36
+- compileSdk: 36
+
+L'aplicació està pensada especialment per a tauletes, encara que també pot executar-se en altres dispositius Android compatibles.
+
+## Guia d'ús
+
+Consulta la [guia d'ús en valencià](docs/GUIA_US_va.md) per conéixer les funcions principals de l'aplicació amb exemples visuals.
+
+També estan disponibles:
+
+- [Guía de uso en español](docs/GUIA_US_es.md)
+- [User guide in English](docs/USER_GUIDE_en.md)
+
+## Descàrrega i instal·lació
+
+La versió estable més recent està disponible en l'apartat [**Releases**](https://github.com/SantiMillaNavarro/Partitures-Festeres/releases/latest).
+
+Per instal·lar l'aplicació:
+
+1. descarrega l'APK de l'última Release;
+2. obri'l en el dispositiu Android;
+3. si Android ho sol·licita, autoritza temporalment la instal·lació d'aplicacions des d'aquesta font.
+
+No és necessari compilar el projecte per utilitzar l'aplicació.
+
+## Desenvolupament i col·laboració
+
+El codi font i la documentació del projecte es mantenen en aquest repositori.
+
+Les propostes de millora, detecció d'errors i contribucions són benvingudes:
+
+- utilitza **Issues** per comunicar errors, suggeriments o idees;
+- utilitza **Pull Requests** per proposar modificacions del codi.
+
+Les contribucions poden ser revisades abans d'incorporar-se a la branca principal.
+
+## Llicència
+
+Aquest projecte es distribueix sota la **Partitures Festeres — Non-Commercial Source-Available License**.
+
+La llicència permet consultar, estudiar, executar, modificar i crear forks del projecte per a usos personals, educatius, no comercials o de col·laboració, però **no permet l'explotació comercial sense autorització expressa** del titular dels drets.
+
+Aquesta és una llicència pròpia de tipus *source-available* i **no és una llicència Open Source aprovada per l'OSI**.
+
+Consulta el fitxer [LICENSE](LICENSE) per a conéixer les condicions completes.
+
+## Ús d'intel·ligència artificial
+
+Aquest projecte s'ha desenvolupat amb una participació significativa d'eines d'intel·ligència artificial.
+
+El **codi de l'aplicació ha sigut generat de manera iterativa amb ChatGPT, d'OpenAI, a partir de les especificacions, requisits, decisions de disseny, proves i indicacions proporcionades per Santi Milla Navarro**.
+
+Santi Milla Navarro ha dirigit el desenvolupament funcional del projecte: ha definit els objectius i el comportament de l'aplicació, ha pres les decisions de disseny, ha provat les diferents versions en dispositius reals, ha detectat errors i ha indicat les correccions i millores necessàries. ChatGPT ha actuat com a eina de desenvolupament, generant i modificant el codi d'acord amb aquestes indicacions i ajudant també en tasques de documentació, revisió i organització del projecte.
+
+Aquesta informació es declara expressament per garantir la màxima transparència sobre el procés de desenvolupament.
+
+## Autor
+
+© 2026 Santi Milla Navarro
+
+Partitures Festeres és un projecte dirigit per **Santi Milla Navarro**.
