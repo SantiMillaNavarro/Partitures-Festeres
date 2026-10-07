@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.PartituresFesteres" parent="android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:fontFamily">serif</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:navigationBarColor">#F5E8CF</item>
+        <item name="android:statusBarColor">#F5E8CF</item>
+        <item name="android:windowActionModeOverlay">true</item>
+    </style>
+
+    <style name="Theme.PartituresFesteres.Splash" parent="android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_window_bg</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:navigationBarColor">#F4E8D2</item>
+        <item name="android:statusBarColor">#F4E8D2</item>
+    </style>
+</resources>
